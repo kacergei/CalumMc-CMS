@@ -1,25 +1,31 @@
 <?php
-//Define Vars
+require_once('functions.php');
+require_once('includes/xtemplate.class.php');
+
+
+// Define Vars
 $navigation = '';
 
+// Ensure the user isn't trying to get at anything eles.
 if (isset($_GET['page'])) {
   if (strstr($_GET['page'], '.') || strstr($_GET['page'], '/')) {
      die('You can\'t use dots or slashes in page names.');
   }
 }
 
-include ('functions.php');
-
+// If no page then home.
 if (isset($_GET['page'])) {
     $page = $_GET['page'];
 } else {
     $page = 'Home';
 }
 
+// Fetch pages from datastore where nav is true
 $dbh = new PDO("sqlite:data/datastore.sqlite");
 $IDq = $dbh->query("SELECT * FROM pages WHERE nav = '1'");
 $rowarray = $IDq->fetchall(PDO::FETCH_ASSOC);
 
+// Loop through and create nav option
 foreach ($rowarray as $file) {
     if ($page == $file['title']) {
         $active = 'class="active"';
@@ -31,23 +37,8 @@ foreach ($rowarray as $file) {
 }
 
 $title = get_data("conf_site_name") . ' | ' . $page;
+
 $content = get_page_content($page);
-$ipaddress = $_SERVER['REMOTE_ADDR'];
-
-if (isset($_SERVER['HTTP_REFERER'])){
-	$referrer = $_SERVER['HTTP_REFERER'];
-} else {
-	$referrer = 'direct/none';
-}
-$datetime = time();
-$useragent = $_SERVER['HTTP_USER_AGENT'];
-$remotehost = getHostByAddr($ipaddress);
-$logfile = fopen("data/logging/logfile.txt", "a");
-$log = $ipaddress . '|' . $referrer . '|' . $datetime . '|' . $useragent . '|' . $remotehost . '|' . $page . "\n";
-fwrite($logfile, $log);
-fclose($logfile);
-
-include_once ('includes/xtemplate.class.php');
 
 $xtpl = new XTemplate('data/default.xtpl');
 
@@ -66,6 +57,7 @@ foreach ($rowarray as $box) {
   $xtpl->assign($box['block'], $box['text']);
 }
 
+// Spit it out.
 $xtpl->parse('main');
 $xtpl->out('main');   
 ?>
