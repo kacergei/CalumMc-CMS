@@ -162,60 +162,13 @@ if (isset($_POST['blocksubmit'])) {
     $message = 'Blocks have been updated';
     $alerttype = 'alert-success';
   }
-}
-    // Show statistics
-if ($_GET['q'] == 'stats') {
-        // Open log file
-  $logfile = "data/logging/logfile.txt";
-  if (file_exists($logfile)) {
-    $handle = fopen($logfile, "r");
-    $log = fread($handle, filesize($logfile));
-    fclose($handle);
-  } else {
-    die("Error! The log file doesn't exist.");
-  }
-        // Seperate each logline
-  $log = explode("\n", trim($log));
-        // Seperate each part in each logline
-  for ($i = 0;$i < count($log);$i++) {
-    $log[$i] = trim($log[$i]);
-    $log[$i] = explode('|', $log[$i]);
-  }
-        // Show a table of the logfile
-  $body.= '<h3>Visit Log</h3><table class="table table-bordered table-hover" style="width:100%;"><tr>';
-  $body.= '<th>Page Visited</th>';
-  $body.= '<th>IP Address</th>';
-  $body.= '<th>Referrer</th>';
-  $body.= '<th>Date</th>';
-  $body.= '<th>Browser</th>';
-  $body.= '<th>Operating System</th>';
-  $body.= '<th>Device</th></tr>';
-  foreach ($log as $logline) {
-   if(isset($logline['3'])){
-     require_once ("data/logging/UAParser.php");
-     $result = UA::parse($logline['3']);
-     if(!isset($result->deviceFull)){
-       $device = 'Computer';
-     }else{
-       $device = $result->deviceFull;
-     }
-     $body.= '<tr>';
-     $body.= '<td>' . $logline['5'] . '</td>';
-     $body.= '<td>' . $logline['0'] . '</td>';
-     $body.= '<td>' . urldecode($logline['1']) . '</td>';
-     $body.= '<td>' . date('d/m/Y', $logline['2']) . '</td>';
-     $body.= '<td>' . $result->browserFull . '</td>';
-     $body.= '<td>' . $result->osFull . '</td>';
-     $body.= '<td>' . $device . '</td>';
-     $body.= '</tr>';
-   }
- }
- $body.= '</table>';
-}
-    //End if logged in.
-
+}    
+//End if logged in.
 }
 ?>
+
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -223,7 +176,7 @@ if ($_GET['q'] == 'stats') {
     <?php echo get_data("conf_site_name"); ?> Admin Panel
   </title>
   <meta charset="utf-8">
-  <script type="text/javascript" src="data/jquery-1.7.1.min.js">
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   </script>
   <script type="text/javascript" src="includes/colorpicker/js/colorpicker.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -333,15 +286,6 @@ if ($_GET['q'] == 'stats') {
               </li>
               <li>
                 <a href="admin.php?q=files"><i class="icon-folder-open"></i> Files</a>
-              </li>
-              <li>
-                <a href="admin.php?q=stats"><i class="icon-eye-open"></i> Stats</a>
-              </li>
-              <li>
-                <a href="admin.php?q=blog"><i class="icon-calendar"></i> Blog</a>
-              </li>
-              <li>
-                <a href="admin.php?q=comments"><i class="icon-thumbs-up"></i> Comments</a>
               </li>
               <li>
                 <a href="index.php"><i class="icon-home"></i> Visit Website</a>
