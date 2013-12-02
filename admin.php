@@ -10,301 +10,301 @@ if(!isset($_GET['q'])){
 }
 // Process login info.
 if (isset($_POST['user']) && isset($_POST['pass'])) {
-    if ($_POST['user'] == get_data("admin_user_name") && $_POST['pass'] == get_data("admin_user_pass")) {
-        $_SESSION['user'] = get_data("admin_user_name");
-    } else {
-        $message = 'Wrong Username/Password';
-        $alerttype = 'alert-error';
-    }
+  if ($_POST['user'] == get_data("admin_user_name") && $_POST['pass'] == get_data("admin_user_pass")) {
+    $_SESSION['user'] = get_data("admin_user_name");
+  } else {
+    $message = 'Wrong Username/Password';
+    $alerttype = 'alert-error';
+  }
 }
 // If logged in.
 if (isset($_SESSION['user'])) {
-    if ($_GET['q'] == 'template' && isset($_POST['template'])) {
-        $template = 'data/default.xtpl';
-        $fh = fopen($template, 'w') or die("Error writing to template, you need chmod 777.");
-        $stringData = stripslashes($_POST['template']);
-        fwrite($fh, $stringData);
-        fclose($fh);
-        $message = 'Template file has been updated';
-        $alerttype = 'alert-success';
-    }
+  if ($_GET['q'] == 'template' && isset($_POST['template'])) {
+    $template = 'data/default.xtpl';
+    $fh = fopen($template, 'w') or die("Error writing to template, you need chmod 777.");
+    $stringData = stripslashes($_POST['template']);
+    fwrite($fh, $stringData);
+    fclose($fh);
+    $message = 'Template file has been updated';
+    $alerttype = 'alert-success';
+  }
     // Signing out
-    if ($_GET['q'] == 'signout') {
-        session_destroy();
-        header('Location: admin.php');
-    }
+  if ($_GET['q'] == 'signout') {
+    session_destroy();
+    header('Location: admin.php');
+  }
     // Create new page?
-    if (isset($_POST['newpage'])) {
-        $title = $_POST['newpage'];
+  if (isset($_POST['newpage'])) {
+    $title = $_POST['newpage'];
         // Create navigation item for page if set.
-        if ($_POST['navigation']=='true') {
-            $nav = 1;
-        } else {
-            $nav = 0;
-        }
-        $dbh = new PDO("sqlite:data/datastore.sqlite");
-        $qry = $dbh->prepare('INSERT INTO pages (title,text,nav) VALUES (?, ?, ?)');
-        $qry->execute(array($title, '<h1>Sorry!</h1><p>No content has been added to this page yet.  Please check back later.</p>', $nav));
-        $message = 'Page has been created';
-        $alerttype = 'alert-success';
+    if ($_POST['navigation']=='true') {
+      $nav = 1;
+    } else {
+      $nav = 0;
     }
+    $dbh = new PDO("sqlite:data/datastore.sqlite");
+    $qry = $dbh->prepare('INSERT INTO pages (title,text,nav) VALUES (?, ?, ?)');
+    $qry->execute(array($title, '<h1>Sorry!</h1><p>No content has been added to this page yet.  Please check back later.</p>', $nav));
+    $message = 'Page has been created';
+    $alerttype = 'alert-success';
+  }
     // Delete a page?
-    if (isset($_GET['delete'])) {
-        $dbh = new PDO("sqlite:data/datastore.sqlite");
-        $qry = $dbh->prepare('DELETE FROM pages WHERE title = ?');
-        $qry->execute(array($_GET['delete']));
-        $message = 'Page has been deleted';
-        $alerttype = 'alert-success';
-    }
+  if (isset($_GET['delete'])) {
+    $dbh = new PDO("sqlite:data/datastore.sqlite");
+    $qry = $dbh->prepare('DELETE FROM pages WHERE title = ?');
+    $qry->execute(array($_GET['delete']));
+    $message = 'Page has been deleted';
+    $alerttype = 'alert-success';
+  }
     // List pages?
-    if ($_GET['q'] == 'pages') {
-        $dbh = new PDO("sqlite:data/datastore.sqlite");
-        $IDq = $dbh->query("SELECT * FROM pages");
-        $rowarray = $IDq->fetchall(PDO::FETCH_ASSOC);
-        $list.= '<table class="table table-hover" style="width:100%;"><tr><td><b>Title</b></td> <td><b>Edit</b></td> <td><b>Delete</b></td><td><b>Navigation Item</b></td></tr>';
-        foreach ($rowarray as $row) {
-            if ($row['nav'] == '1') {
-                $nav = 'Yes';
-            } else {
-                $nav = 'No';
-            }
-            $list.= '<tr><td>' . $row['title'] . '</td> <td><a class="btn btn-primary btn-mini" href="admin.php?q=edit&p=' . $row['title'] . '"><i class="icon-pencil"></i> Edit Page</a></td> <td><a class="btn btn-danger btn-mini" href="admin.php?q=pages&delete=' . $row['title'] . '"><i class="icon-trash"></i> Delete Page</a></td><td>' . $nav . '</td></tr>';
-        }
-        $list.= '</table>';
-        $body = $list . '<br /><form action="admin.php?q=pages" class="well form-inline" method="post" /><p><i class="icon-plus-sign"></i> New Page: <input type="text" placeholder="Page Title" name="newpage" /> <select name="navigation"><option value="true">Show on navigation bar</option><option value="false">Do not show on navigation bar</option></select> <input type="submit" class="btn btn-primary" value="Go"></p></form>';
-    }
-    // Submit edited page.
-    if (isset($_POST['edit'])) {
-        $stringData = stripslashes($_POST['edit']);
-        $dbh = new PDO("sqlite:data/datastore.sqlite");
-        $qry = $dbh->prepare("UPDATE pages SET title=?, text=? WHERE title = ?");
-        $qry->execute(array($_GET['p'], $stringData, $_GET['p']));
-        $message = 'Page has been updated';
-        $alerttype = 'alert-success';
-    }
-    // Edit a page.
-    if ($_GET['q'] == 'edit') {
-        $body = '<form action="admin.php?q=edit&p=' . $_GET["p"] . '" class="well" method="post">
-			<textarea style="width:100%;" rows="20" cols="100" name="edit">' . get_page_content($_GET["p"]) . '</textarea>
-			<script type="text/javascript">
-					CKEDITOR.replace("edit",{
-					extraPlugins: "magicline",
-					allowedContent: true
-				});
-			</script>
-			<input type="submit" class="btn btn-primary" value="Save" />
-		</form>';
-    }
-    // Edit the template.
-    if ($_GET['q'] == 'template') {
-        $body = '<form action="admin.php?q=template" class="well" method="post" class="well">
-			<h2>Edit Raw Template:</h2>
-			<textarea style="width:100%;" rows="20" cols="100" name="template">' . htmlentities(file_get_contents("data/default.xtpl")) . '</textarea>
-			<input type="submit" class="btn btn-primary" value="Save" />
-		</form>';
-    }
-    if ($_GET['q'] == 'style') {
-      include_once ('includes/xtemplate.class.php');
-
-      $xtpl = new XTemplate('data/css_settings.xtpl');
-      
-      // Get block data and assign it.
-      $dbh = new PDO("sqlite:data/datastore.sqlite");
-      $IDq = $dbh->query("SELECT * FROM css");
-      $rowarray = $IDq->fetchall(PDO::FETCH_ASSOC);
-      foreach ($rowarray as $css) {
-        $xtpl->assign($css['id'], '<div class="control-group"><label class="control-label" for="'.$css["id"].'">'.$css["desc"].'</label><div class="controls"><input type="text" name="'.$css["id"].'" class="colour" id="'.$css["id"].'" style="width:50px;" value="'.$css['value'].'"></div></div>');
+  if ($_GET['q'] == 'pages') {
+    $dbh = new PDO("sqlite:data/datastore.sqlite");
+    $IDq = $dbh->query("SELECT * FROM pages");
+    $rowarray = $IDq->fetchall(PDO::FETCH_ASSOC);
+    $list.= '<table class="table table-hover" style="width:100%;"><tr><td><b>Title</b></td> <td><b>Edit</b></td> <td><b>Delete</b></td><td><b>Navigation Item</b></td></tr>';
+    foreach ($rowarray as $row) {
+      if ($row['nav'] == '1') {
+        $nav = 'Yes';
+      } else {
+        $nav = 'No';
       }
-      $xtpl->assign("n", "<br>");
-      $xtpl->parse('main');
+      $list.= '<tr><td>' . $row['title'] . '</td> <td><a class="btn btn-primary btn-mini" href="admin.php?q=edit&p=' . $row['title'] . '"><i class="icon-pencil"></i> Edit Page</a></td> <td><a class="btn btn-danger btn-mini" href="admin.php?q=pages&delete=' . $row['title'] . '"><i class="icon-trash"></i> Delete Page</a></td><td>' . $nav . '</td></tr>';
     }
+    $list.= '</table>';
+    $body = $list . '<br /><form action="admin.php?q=pages" class="well form-inline" method="post" /><p><i class="icon-plus-sign"></i> New Page: <input type="text" placeholder="Page Title" name="newpage" /> <select name="navigation"><option value="true">Show on navigation bar</option><option value="false">Do not show on navigation bar</option></select> <input type="submit" class="btn btn-primary" value="Go"></p></form>';
+  }
+    // Submit edited page.
+  if (isset($_POST['edit'])) {
+    $stringData = stripslashes($_POST['edit']);
+    $dbh = new PDO("sqlite:data/datastore.sqlite");
+    $qry = $dbh->prepare("UPDATE pages SET title=?, text=? WHERE title = ?");
+    $qry->execute(array($_GET['p'], $stringData, $_GET['p']));
+    $message = 'Page has been updated';
+    $alerttype = 'alert-success';
+  }
+    // Edit a page.
+  if ($_GET['q'] == 'edit') {
+    $body = '<form action="admin.php?q=edit&p=' . $_GET["p"] . '" class="well" method="post">
+    <textarea style="width:100%;" rows="20" cols="100" name="edit">' . get_page_content($_GET["p"]) . '</textarea>
+    <script type="text/javascript">
+     CKEDITOR.replace("edit",{
+       extraPlugins: "magicline",
+       allowedContent: true
+     });
+</script>
+<input type="submit" class="btn btn-primary" value="Save" />
+</form>';
+}
+    // Edit the template.
+if ($_GET['q'] == 'template') {
+  $body = '<form action="admin.php?q=template" class="well" method="post" class="well">
+  <h2>Edit Raw Template:</h2>
+  <textarea style="width:100%;" rows="20" cols="100" name="template">' . htmlentities(file_get_contents("data/default.xtpl")) . '</textarea>
+  <input type="submit" class="btn btn-primary" value="Save" />
+</form>';
+}
+if ($_GET['q'] == 'style') {
+  include_once ('includes/xtemplate.class.php');
+
+  $xtpl = new XTemplate('data/css_settings.xtpl');
+  
+      // Get block data and assign it.
+  $dbh = new PDO("sqlite:data/datastore.sqlite");
+  $IDq = $dbh->query("SELECT * FROM css");
+  $rowarray = $IDq->fetchall(PDO::FETCH_ASSOC);
+  foreach ($rowarray as $css) {
+    $xtpl->assign($css['id'], '<div class="control-group"><label class="control-label" for="'.$css["id"].'">'.$css["desc"].'</label><div class="controls"><input type="text" name="'.$css["id"].'" class="colour" id="'.$css["id"].'" style="width:50px;" value="'.$css['value'].'"></div></div>');
+  }
+  $xtpl->assign("n", "<br>");
+  $xtpl->parse('main');
+}
     // Edit Blocks
-    if ($_GET['q'] == 'blocks') {
+if ($_GET['q'] == 'blocks') {
 
-        $body = '<form action="admin.php?q=blocks" method="post"><input type="hidden" name="blocksubmit" value="true">';
-        $dbh = new PDO("sqlite:data/datastore.sqlite");
-        $IDq = $dbh->query("SELECT * FROM blocks");
-        $rowarray = $IDq->fetchall(PDO::FETCH_ASSOC);
-          foreach ($rowarray as $box) {
-            $body .= '
-            <div class="well" style="width:100%; float:left; margin:5px;">
-              <h2>'.$box['block'].'</h2>
-              <input style="width:100%" id="'.$box['block'].'title" placeholder="title" type="text" value="'.$box['title'].'"><br>
-              <input style="width:100%" id="'.$box['block'].'url" placeholder="link URL" type="text" value="'.$box['link'].'"><br>
-              <textarea style="width:100%; height:200px;" id="'.$box['block'].'text" name="'.$box['block'].'text">'.$box['text'].'</textarea>
+  $body = '<form action="admin.php?q=blocks" method="post"><input type="hidden" name="blocksubmit" value="true">';
+  $dbh = new PDO("sqlite:data/datastore.sqlite");
+  $IDq = $dbh->query("SELECT * FROM blocks");
+  $rowarray = $IDq->fetchall(PDO::FETCH_ASSOC);
+  foreach ($rowarray as $box) {
+    $body .= '
+    <div class="well" style="width:100%; float:left; margin:5px;">
+      <h2>'.$box['block'].'</h2>
+      <input style="width:100%" id="'.$box['block'].'title" placeholder="title" type="text" value="'.$box['title'].'"><br>
+      <input style="width:100%" id="'.$box['block'].'url" placeholder="link URL" type="text" value="'.$box['link'].'"><br>
+      <textarea style="width:100%; height:200px;" id="'.$box['block'].'text" name="'.$box['block'].'text">'.$box['text'].'</textarea>
 
-            </div>
-			<script type="text/javascript">
-					CKEDITOR.replace("'.$box['block'].'text",{
-					customConfig: "minimal_config.js"
-				});
-			</script>
-		        ';
-		      }
-		    $body .= '<input type="submit" class="btn btn-primary" value="Save All"></form>';
-    }
+    </div>
+    <script type="text/javascript">
+     CKEDITOR.replace("'.$box['block'].'text",{
+       customConfig: "minimal_config.js"
+     });
+</script>
+';
+}
+$body .= '<input type="submit" class="btn btn-primary" value="Save All"></form>';
+}
     // Submit blocks
-    if (isset($_POST['blocksubmit'])) {
-        $dbh = new PDO("sqlite:data/datastore.sqlite");
-        $IDq = $dbh->query("SELECT * FROM blocks");
-        $rowarray = $IDq->fetchall(PDO::FETCH_ASSOC);
-          foreach ($rowarray as $box) {
-            $qry = $dbh->prepare("UPDATE blocks SET title=?, link=? text=? WHERE block = ?");
-            $block = $box['block'];
-			$text = stripslashes($_POST[$block.'text']);
-            $qry->execute(array($_POST[$block.'title'], $_POST[$block.'url'],$text,$box['block']));
-            $message = 'Blocks have been updated';
-            $alerttype = 'alert-success';
-		      }
-    }
+if (isset($_POST['blocksubmit'])) {
+  $dbh = new PDO("sqlite:data/datastore.sqlite");
+  $IDq = $dbh->query("SELECT * FROM blocks");
+  $rowarray = $IDq->fetchall(PDO::FETCH_ASSOC);
+  foreach ($rowarray as $box) {
+    $qry = $dbh->prepare("UPDATE blocks SET title=?, link=? text=? WHERE block = ?");
+    $block = $box['block'];
+    $text = stripslashes($_POST[$block.'text']);
+    $qry->execute(array($_POST[$block.'title'], $_POST[$block.'url'],$text,$box['block']));
+    $message = 'Blocks have been updated';
+    $alerttype = 'alert-success';
+  }
+}
     // Show statistics
-    if ($_GET['q'] == 'stats') {
+if ($_GET['q'] == 'stats') {
         // Open log file
-        $logfile = "data/logging/logfile.txt";
-        if (file_exists($logfile)) {
-            $handle = fopen($logfile, "r");
-            $log = fread($handle, filesize($logfile));
-            fclose($handle);
-        } else {
-            die("Error! The log file doesn't exist.");
-        }
+  $logfile = "data/logging/logfile.txt";
+  if (file_exists($logfile)) {
+    $handle = fopen($logfile, "r");
+    $log = fread($handle, filesize($logfile));
+    fclose($handle);
+  } else {
+    die("Error! The log file doesn't exist.");
+  }
         // Seperate each logline
-        $log = explode("\n", trim($log));
+  $log = explode("\n", trim($log));
         // Seperate each part in each logline
-        for ($i = 0;$i < count($log);$i++) {
-            $log[$i] = trim($log[$i]);
-            $log[$i] = explode('|', $log[$i]);
-        }
+  for ($i = 0;$i < count($log);$i++) {
+    $log[$i] = trim($log[$i]);
+    $log[$i] = explode('|', $log[$i]);
+  }
         // Show a table of the logfile
-        $body.= '<h3>Visit Log</h3><table class="table table-bordered table-hover" style="width:100%;"><tr>';
-        $body.= '<th>Page Visited</th>';
-        $body.= '<th>IP Address</th>';
-        $body.= '<th>Referrer</th>';
-        $body.= '<th>Date</th>';
-        $body.= '<th>Browser</th>';
-        $body.= '<th>Operating System</th>';
-        $body.= '<th>Device</th></tr>';
-        foreach ($log as $logline) {
-			if(isset($logline['3'])){
-            	require_once ("data/logging/UAParser.php");
-            	$result = UA::parse($logline['3']);
-				if(!isset($result->deviceFull)){
-					$device = 'Computer';
-				}else{
-					$device = $result->deviceFull;
-				}
-            	$body.= '<tr>';
-            	$body.= '<td>' . $logline['5'] . '</td>';
-            	$body.= '<td>' . $logline['0'] . '</td>';
-            	$body.= '<td>' . urldecode($logline['1']) . '</td>';
-            	$body.= '<td>' . date('d/m/Y', $logline['2']) . '</td>';
-            	$body.= '<td>' . $result->browserFull . '</td>';
-            	$body.= '<td>' . $result->osFull . '</td>';
-            	$body.= '<td>' . $device . '</td>';
-            	$body.= '</tr>';
-			}
-        }
-        $body.= '</table>';
-    }
+  $body.= '<h3>Visit Log</h3><table class="table table-bordered table-hover" style="width:100%;"><tr>';
+  $body.= '<th>Page Visited</th>';
+  $body.= '<th>IP Address</th>';
+  $body.= '<th>Referrer</th>';
+  $body.= '<th>Date</th>';
+  $body.= '<th>Browser</th>';
+  $body.= '<th>Operating System</th>';
+  $body.= '<th>Device</th></tr>';
+  foreach ($log as $logline) {
+   if(isset($logline['3'])){
+     require_once ("data/logging/UAParser.php");
+     $result = UA::parse($logline['3']);
+     if(!isset($result->deviceFull)){
+       $device = 'Computer';
+     }else{
+       $device = $result->deviceFull;
+     }
+     $body.= '<tr>';
+     $body.= '<td>' . $logline['5'] . '</td>';
+     $body.= '<td>' . $logline['0'] . '</td>';
+     $body.= '<td>' . urldecode($logline['1']) . '</td>';
+     $body.= '<td>' . date('d/m/Y', $logline['2']) . '</td>';
+     $body.= '<td>' . $result->browserFull . '</td>';
+     $body.= '<td>' . $result->osFull . '</td>';
+     $body.= '<td>' . $device . '</td>';
+     $body.= '</tr>';
+   }
+ }
+ $body.= '</table>';
+}
     //End if logged in.
-    
+
 }
 ?>
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>
-      <?php echo get_data("conf_site_name"); ?> Admin Panel
-    </title>
-    <meta charset="utf-8">
-    <script type="text/javascript" src="data/jquery-1.7.1.min.js">
-    </script>
-	<script type="text/javascript" src="includes/colorpicker/js/colorpicker.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script type="text/javascript">
-            function showpop(){
-                        $(document).ready(function() {
-                        $("#popup").fadeIn("slow");
-                        setTimeout("hidepop()",12000);
-                        });
-                        }
+<head>
+  <title>
+    <?php echo get_data("conf_site_name"); ?> Admin Panel
+  </title>
+  <meta charset="utf-8">
+  <script type="text/javascript" src="data/jquery-1.7.1.min.js">
+  </script>
+  <script type="text/javascript" src="includes/colorpicker/js/colorpicker.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/javascript">
+    function showpop(){
+      $(document).ready(function() {
+        $("#popup").fadeIn("slow");
+        setTimeout("hidepop()",12000);
+      });
+    }
 
-                function hidepop(){
-                        $(document).ready(function() {
-                        $("#popup").fadeOut("slow");
-                        });
-                        }
-                function resizeIframe(height){
+    function hidepop(){
+      $(document).ready(function() {
+        $("#popup").fadeOut("slow");
+      });
+    }
+    function resizeIframe(height){
 					    // "+60" is a general rule of thumb to allow for differences in
 					    // IE & and FF height reporting, can be adjusted as required
-						document.getElementById('local-iframe').height = parseInt(height)+60;
-						document.getElementById('local-iframe').width = '100%';
-				}
-    </script>
-    <style type="text/css">
-    #popup{
-        display:none;
-		margin-top:5px;
-    }
-    body{
-        padding-top: 126px;
-    }
-	img{
-		padding:0;
-		margin:0;
-		border-style: none;
-	}
-	.brand{
-    position: absolute;
-    width: 100%;
-    left: 0;
-    text-align: center;
-    margin: auto;
-	}
-	.navbar-inner{
-		height:126px;
-	}
-	.nav-collapse{
-	margin-top:76px;
-	}
-	.login-logo{
-	text-align: center;
-	}
-    </style>
-    <link href="framework/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="includes/colorpicker/css/colorpicker.css" type="text/css" />
-    <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <?php if ($_GET['q'] == 'edit' || $_GET['q'] == 'blocks') { ?>
-    <script src="includes/ckeditor/ckeditor.js"></script>
-	<?php } ?>
-	<?php if ($_GET['q'] == 'files') { ?>
-		<!-- jQuery and jQuery UI (REQUIRED) -->
-		<link rel="stylesheet" type="text/css" media="screen" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/smoothness/jquery-ui.css">
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
+              document.getElementById('local-iframe').height = parseInt(height)+60;
+              document.getElementById('local-iframe').width = '100%';
+            }
+          </script>
+          <style type="text/css">
+            #popup{
+              display:none;
+              margin-top:5px;
+            }
+            body{
+              padding-top: 126px;
+            }
+            img{
+              padding:0;
+              margin:0;
+              border-style: none;
+            }
+            .brand{
+              position: absolute;
+              width: 100%;
+              left: 0;
+              text-align: center;
+              margin: auto;
+            }
+            .navbar-inner{
+              height:126px;
+            }
+            .nav-collapse{
+             margin-top:76px;
+           }
+           .login-logo{
+             text-align: center;
+           }
+         </style>
+         <link href="framework/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+         <link rel="stylesheet" href="includes/colorpicker/css/colorpicker.css" type="text/css" />
+         <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+         <?php if ($_GET['q'] == 'edit' || $_GET['q'] == 'blocks') { ?>
+         <script src="includes/ckeditor/ckeditor.js"></script>
+         <?php } ?>
+         <?php if ($_GET['q'] == 'files') { ?>
+         <!-- jQuery and jQuery UI (REQUIRED) -->
+         <link rel="stylesheet" type="text/css" media="screen" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/smoothness/jquery-ui.css">
+         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
 
-		<!-- elFinder CSS (REQUIRED) -->
-		<link rel="stylesheet" type="text/css" media="screen" href="includes/elfinder-2.0-rc1/css/elfinder.min.css">
-		<link rel="stylesheet" type="text/css" media="screen" href="includes/elfinder-2.0-rc1/css/theme.css">
+         <!-- elFinder CSS (REQUIRED) -->
+         <link rel="stylesheet" type="text/css" media="screen" href="includes/elfinder-2.0-rc1/css/elfinder.min.css">
+         <link rel="stylesheet" type="text/css" media="screen" href="includes/elfinder-2.0-rc1/css/theme.css">
 
-		<!-- elFinder JS (REQUIRED) -->
-		<script type="text/javascript" src="includes/elfinder-2.0-rc1/js/elfinder.min.js"></script>
+         <!-- elFinder JS (REQUIRED) -->
+         <script type="text/javascript" src="includes/elfinder-2.0-rc1/js/elfinder.min.js"></script>
 
-		<!-- elFinder initialization (REQUIRED) -->
-		<script type="text/javascript" charset="utf-8">
-			$().ready(function() {
-				var elf = $('#elfinder').elfinder({
+         <!-- elFinder initialization (REQUIRED) -->
+         <script type="text/javascript" charset="utf-8">
+           $().ready(function() {
+            var elf = $('#elfinder').elfinder({
 					url : 'includes/elfinder-2.0-rc1/php/connector.php'  // connector URL (REQUIRED)
 				}).elfinder('instance');
-			});
-		</script>
+          });
+         </script>
 
-	<?php $body = '<div id="elfinder"></div>';
-} ?>
-  </head>
-  <body onload="$('.colour').ColorPicker();<?php if (isset($message)) {
-    echo 'showpop();"';
-}else{ echo '"';} ?>>
+         <?php $body = '<div id="elfinder"></div>';
+       } ?>
+     </head>
+     <body onload="$('.colour').ColorPicker();<?php if (isset($message)) {
+      echo 'showpop();"';
+    }else{ echo '"';} ?>>
     <?php if (isset($_SESSION['user'])) { ?>
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
@@ -349,40 +349,40 @@ if (isset($_SESSION['user'])) {
       </div>
     </div>
 
-	<?php
-} ?>
-    <div class="container">
-      <div style="width:100%; height:42px;">
-        <div id="popup" class="alert <?php echo $alerttype; ?>">
-         <?php
+    <?php
+  } ?>
+  <div class="container">
+    <div style="width:100%; height:42px;">
+      <div id="popup" class="alert <?php echo $alerttype; ?>">
+       <?php
 // Any popups?
-echo $message; ?>
-    </div>
-  </div>
-	  <?php
+       echo $message; ?>
+     </div>
+   </div>
+   <?php
 // If not logged in, show login box.
-if (!isset($_SESSION['user'])) { ?>
-	<p class="login-logo"><img src="includes/admin_logo.png" alt="McAlinden" width="200"></p>
-      <form class="well" action="admin.php" method="post">
-          <label>Admin Username</label>
-          <input type="text" name="user" placeholder="Username">
-          <span class="help-block">Please type your admin username.</span>
-          <label>Admin Password</label>
-          <input type="password" name="pass" placeholder="Password"> 
-          <span class="help-block">Please type your admin password.</span>
-          <input type="submit" class="btn btn-primary" value="Sign In">
-      </form>
-  	  <?php
+   if (!isset($_SESSION['user'])) { ?>
+   <p class="login-logo"><img src="includes/admin_logo.png" alt="McAlinden" width="200"></p>
+   <form class="well" action="admin.php" method="post">
+    <label>Admin Username</label>
+    <input type="text" name="user" placeholder="Username">
+    <span class="help-block">Please type your admin username.</span>
+    <label>Admin Password</label>
+    <input type="password" name="pass" placeholder="Password"> 
+    <span class="help-block">Please type your admin password.</span>
+    <input type="submit" class="btn btn-primary" value="Sign In">
+  </form>
+  <?php
     // If logged in, display the body that has been produced.
-    
+  
 } else {
-    echo $body;
-    if(isset($xtpl)){
-      echo '<form class="form-horizontal">';
-      $xtpl->out('main');
-      echo '</form>';
-    }
+  echo $body;
+  if(isset($xtpl)){
+    echo '<form class="form-horizontal">';
+    $xtpl->out('main');
+    echo '</form>';
+  }
 } ?>
-	</div>
-  </body>
+</div>
+</body>
 </html>

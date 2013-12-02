@@ -1,42 +1,12 @@
 <?php
-//
-//  Project: phpLiteAdmin (http://phpliteadmin.googlecode.com)
-//  Version: 1.9.1
-//  Summary: PHP-based admin tool to manage SQLite2 and SQLite3 databases on the web
-//  Last updated: 11/3/11
-//  Developers:
-//     Dane Iracleous (daneiracleous@gmail.com)
-//     Ian Aldrighetti (ian.aldrighetti@gmail.com)
-//     George Flanagin & Digital Gaslight, Inc (george@digitalgaslight.com)
-//
-//
-//  Copyright (C) 2011  phpLiteAdmin
-//
-//  This program is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-//
-///////////////////////////////////////////////////////////////////////////
-//please report any bugs you encounter to http://code.google.com/p/phpliteadmin/issues/list
-//BEGIN USER-DEFINED VARIABLES
-//////////////////////////////
-//password to gain access
-$password = "hurtin";
-//directory relative to this file to search for databases (if false, manually list databases in the $databases variable)
+
+$password = ""
+
 $directory = "data/";
-//whether or not to scan the subdirectories of the above directory infinitely deep
+
 $subdirectories = false;
-//if the above $directory variable is set to false, you must specify the databases manually in an array as the next variable
-//if any of the databases do not exist as they are referenced by their path, they will be created automatically
+
+
 $databases = array(array("path" => "userids.sqlite", "name" => "User IDs"), array("path" => "database2.sqlite", "name" => "Database 2"));
 //a list of custom functions that can be applied to columns in the databases
 //make sure to define every function below if it is not a core PHP function
@@ -232,17 +202,17 @@ if ($directory !== false) {
                     $perms+= is_writeable($databases[$j]['path']) ? 2 : 0;
                     switch ($perms) {
                         case 6:
-                            $perms = "[rw] ";
+                        $perms = "[rw] ";
                         break;
                         case 4:
-                            $perms = "[r ] ";
+                        $perms = "[r ] ";
                         break;
                         case 2:
-                            $perms = "[ w] ";
+                        $perms = "[ w] ";
                         break; // God forbid, but it might happen.
-                            
+                        
                         default:
-                            $perms = "[  ] ";
+                        $perms = "[  ] ";
                         break;
                     }
                     $databases[$j]['perms'] = $perms;
@@ -346,41 +316,41 @@ class Database {
             $ver = $this->getVersion();
             switch (true) {
                 case (FORCETYPE == "PDO" || ((FORCETYPE == false || $ver != - 1) && class_exists("PDO") && ($ver == - 1 || $ver == 3))):
-                    $this->db = new PDO("sqlite:" . $this->data['path']);
-                    if ($this->db != NULL) {
-                        $this->type = "PDO";
-                        $cfns = unserialize(CUSTOM_FUNCTIONS);
-                        for ($i = 0;$i < sizeof($cfns);$i++) {
-                            $this->db->sqliteCreateFunction($cfns[$i], $cfns[$i], 1);
-                            $this->addUserFunction($cfns[$i]);
-                        }
-                        break;
+                $this->db = new PDO("sqlite:" . $this->data['path']);
+                if ($this->db != NULL) {
+                    $this->type = "PDO";
+                    $cfns = unserialize(CUSTOM_FUNCTIONS);
+                    for ($i = 0;$i < sizeof($cfns);$i++) {
+                        $this->db->sqliteCreateFunction($cfns[$i], $cfns[$i], 1);
+                        $this->addUserFunction($cfns[$i]);
                     }
+                    break;
+                }
                 case (FORCETYPE == "SQLite3" || ((FORCETYPE == false || $ver != - 1) && class_exists("SQLite3") && ($ver == - 1 || $ver == 3))):
-                    $this->db = new SQLite3($this->data['path']);
-                    if ($this->db != NULL) {
-                        $cfns = unserialize(CUSTOM_FUNCTIONS);
-                        for ($i = 0;$i < sizeof($cfns);$i++) {
-                            $this->db->createFunction($cfns[$i], $cfns[$i], 1);
-                            $this->addUserFunction($cfns[$i]);
-                        }
-                        $this->type = "SQLite3";
-                        break;
+                $this->db = new SQLite3($this->data['path']);
+                if ($this->db != NULL) {
+                    $cfns = unserialize(CUSTOM_FUNCTIONS);
+                    for ($i = 0;$i < sizeof($cfns);$i++) {
+                        $this->db->createFunction($cfns[$i], $cfns[$i], 1);
+                        $this->addUserFunction($cfns[$i]);
                     }
+                    $this->type = "SQLite3";
+                    break;
+                }
                 case (FORCETYPE == "SQLiteDatabase" || ((FORCETYPE == false || $ver != - 1) && class_exists("SQLiteDatabase") && ($ver == - 1 || $ver == 2))):
-                    $this->db = new SQLiteDatabase($this->data['path']);
-                    if ($this->db != NULL) {
-                        $cfns = unserialize(CUSTOM_FUNCTIONS);
-                        for ($i = 0;$i < sizeof($cfns);$i++) {
-                            $this->db->createFunction($cfns[$i], $cfns[$i], 1);
-                            $this->addUserFunction($cfns[$i]);
-                        }
-                        $this->type = "SQLiteDatabase";
-                        break;
+                $this->db = new SQLiteDatabase($this->data['path']);
+                if ($this->db != NULL) {
+                    $cfns = unserialize(CUSTOM_FUNCTIONS);
+                    for ($i = 0;$i < sizeof($cfns);$i++) {
+                        $this->db->createFunction($cfns[$i], $cfns[$i], 1);
+                        $this->addUserFunction($cfns[$i]);
                     }
+                    $this->type = "SQLiteDatabase";
+                    break;
+                }
                 default:
-                    $this->showError();
-                    exit();
+                $this->showError();
+                exit();
             }
         }
         catch(Exception $e) {
@@ -570,82 +540,82 @@ class Database {
                 $row = $this->select($tempQuery); //table sql
                 $tmpname = 't' . time();
                 $origsql = trim(preg_replace("/[\s]+/", " ", str_replace(",", ", ", preg_replace("/[\(]/", "( ", $row['sql'], 1))));
-                $createtemptableSQL = 'CREATE TEMPORARY ' . substr(trim(preg_replace("'" . $table . "'", $tmpname, $origsql, 1)), 6);
-                $createindexsql = array();
-                $i = 0;
-                $defs = preg_split("/[,]+/", $alterdefs, -1, PREG_SPLIT_NO_EMPTY);
-                $prevword = $table;
-                $oldcols = preg_split("/[,]+/", substr(trim($createtemptableSQL), strpos(trim($createtemptableSQL), '(') + 1), -1, PREG_SPLIT_NO_EMPTY);
-                $newcols = array();
-                for ($i = 0;$i < sizeof($oldcols);$i++) {
-                    $colparts = preg_split("/[\s]+/", $oldcols[$i], -1, PREG_SPLIT_NO_EMPTY);
-                    $oldcols[$i] = $colparts[0];
-                    $newcols[$colparts[0]] = $colparts[0];
-                }
-                $newcolumns = '';
-                $oldcolumns = '';
-                reset($newcols);
-                while (list($key, $val) = each($newcols)) {
-                    $newcolumns.= ($newcolumns ? ', ' : '') . $val;
-                    $oldcolumns.= ($oldcolumns ? ', ' : '') . $key;
-                }
-                $copytotempsql = 'INSERT INTO ' . $tmpname . '(' . $newcolumns . ') SELECT ' . $oldcolumns . ' FROM ' . $table;
-                $dropoldsql = 'DROP TABLE ' . $table;
-                $createtesttableSQL = $createtemptableSQL;
-                foreach ($defs as $def) {
-                    $defparts = preg_split("/[\s]+/", $def, -1, PREG_SPLIT_NO_EMPTY);
-                    $action = strtolower($defparts[0]);
-                    switch ($action) {
-                        case 'add':
-                            if (sizeof($defparts) <= 2) return false;
-                            $createtesttableSQL = substr($createtesttableSQL, 0, strlen($createtesttableSQL) - 1) . ',';
-                            for ($i = 1;$i < sizeof($defparts);$i++) $createtesttableSQL.= ' ' . $defparts[$i];
-                            $createtesttableSQL.= ')';
-                            break;
-                        case 'change':
-                            if (sizeof($defparts) <= 3) {
-                                return false;
-                            }
-                            if ($severpos = strpos($createtesttableSQL, ' ' . $defparts[1] . ' ')) {
-                                if ($newcols[$defparts[1]] != $defparts[1]) return false;
-                                $newcols[$defparts[1]] = $defparts[2];
-                                $nextcommapos = strpos($createtesttableSQL, ',', $severpos);
-                                $insertval = '';
-                                for ($i = 2;$i < sizeof($defparts);$i++) $insertval.= ' ' . $defparts[$i];
-                                if ($nextcommapos) $createtesttableSQL = substr($createtesttableSQL, 0, $severpos) . $insertval . substr($createtesttableSQL, $nextcommapos);
-                                else $createtesttableSQL = substr($createtesttableSQL, 0, $severpos - (strpos($createtesttableSQL, ',') ? 0 : 1)) . $insertval . ')';
-                            } else return false;
-                            break;
-                        case 'drop':
-                            if (sizeof($defparts) < 2) return false;
-                            if ($severpos = strpos($createtesttableSQL, ' ' . $defparts[1] . ' ')) {
-                                $nextcommapos = strpos($createtesttableSQL, ',', $severpos);
-                                if ($nextcommapos) $createtesttableSQL = substr($createtesttableSQL, 0, $severpos) . substr($createtesttableSQL, $nextcommapos + 1);
-                                else $createtesttableSQL = substr($createtesttableSQL, 0, $severpos - (strpos($createtesttableSQL, ',') ? 0 : 1) - 1) . ')';
-                                unset($newcols[$defparts[1]]);
-                            } else return false;
-                            break;
-                        default:
-                            return false;
+                    $createtemptableSQL = 'CREATE TEMPORARY ' . substr(trim(preg_replace("'" . $table . "'", $tmpname, $origsql, 1)), 6);
+                    $createindexsql = array();
+                    $i = 0;
+                    $defs = preg_split("/[,]+/", $alterdefs, -1, PREG_SPLIT_NO_EMPTY);
+                    $prevword = $table;
+                    $oldcols = preg_split("/[,]+/", substr(trim($createtemptableSQL), strpos(trim($createtemptableSQL), '(') + 1), -1, PREG_SPLIT_NO_EMPTY);
+                        $newcols = array();
+                        for ($i = 0;$i < sizeof($oldcols);$i++) {
+                            $colparts = preg_split("/[\s]+/", $oldcols[$i], -1, PREG_SPLIT_NO_EMPTY);
+                            $oldcols[$i] = $colparts[0];
+                            $newcols[$colparts[0]] = $colparts[0];
                         }
-                        $prevword = $defparts[sizeof($defparts) - 1];
-                    }
+                        $newcolumns = '';
+                        $oldcolumns = '';
+                        reset($newcols);
+                        while (list($key, $val) = each($newcols)) {
+                            $newcolumns.= ($newcolumns ? ', ' : '') . $val;
+                            $oldcolumns.= ($oldcolumns ? ', ' : '') . $key;
+                        }
+                        $copytotempsql = 'INSERT INTO ' . $tmpname . '(' . $newcolumns . ') SELECT ' . $oldcolumns . ' FROM ' . $table;
+                        $dropoldsql = 'DROP TABLE ' . $table;
+                        $createtesttableSQL = $createtemptableSQL;
+                        foreach ($defs as $def) {
+                            $defparts = preg_split("/[\s]+/", $def, -1, PREG_SPLIT_NO_EMPTY);
+                            $action = strtolower($defparts[0]);
+                            switch ($action) {
+                                case 'add':
+                                if (sizeof($defparts) <= 2) return false;
+                                $createtesttableSQL = substr($createtesttableSQL, 0, strlen($createtesttableSQL) - 1) . ',';
+                                for ($i = 1;$i < sizeof($defparts);$i++) $createtesttableSQL.= ' ' . $defparts[$i];
+                                    $createtesttableSQL.= ')';
+break;
+case 'change':
+if (sizeof($defparts) <= 3) {
+    return false;
+}
+if ($severpos = strpos($createtesttableSQL, ' ' . $defparts[1] . ' ')) {
+    if ($newcols[$defparts[1]] != $defparts[1]) return false;
+    $newcols[$defparts[1]] = $defparts[2];
+    $nextcommapos = strpos($createtesttableSQL, ',', $severpos);
+    $insertval = '';
+    for ($i = 2;$i < sizeof($defparts);$i++) $insertval.= ' ' . $defparts[$i];
+        if ($nextcommapos) $createtesttableSQL = substr($createtesttableSQL, 0, $severpos) . $insertval . substr($createtesttableSQL, $nextcommapos);
+    else $createtesttableSQL = substr($createtesttableSQL, 0, $severpos - (strpos($createtesttableSQL, ',') ? 0 : 1)) . $insertval . ')';
+} else return false;
+break;
+case 'drop':
+if (sizeof($defparts) < 2) return false;
+if ($severpos = strpos($createtesttableSQL, ' ' . $defparts[1] . ' ')) {
+    $nextcommapos = strpos($createtesttableSQL, ',', $severpos);
+    if ($nextcommapos) $createtesttableSQL = substr($createtesttableSQL, 0, $severpos) . substr($createtesttableSQL, $nextcommapos + 1);
+    else $createtesttableSQL = substr($createtesttableSQL, 0, $severpos - (strpos($createtesttableSQL, ',') ? 0 : 1) - 1) . ')';
+unset($newcols[$defparts[1]]);
+} else return false;
+break;
+default:
+return false;
+}
+$prevword = $defparts[sizeof($defparts) - 1];
+}
                     //this block of code generates a test table simply to verify that the columns specifed are valid in an sql statement
                     //this ensures that no reserved words are used as columns, for example
-                    $tempResult = $this->query($createtesttableSQL);
-                    if (!$tempResult) return false;
-                    $droptempsql = 'DROP TABLE ' . $tmpname;
-                    $tempResult = $this->query($droptempsql);
+$tempResult = $this->query($createtesttableSQL);
+if (!$tempResult) return false;
+$droptempsql = 'DROP TABLE ' . $tmpname;
+$tempResult = $this->query($droptempsql);
                     //end block
-                    $createnewtableSQL = 'CREATE ' . substr(trim(preg_replace("'" . $tmpname . "'", $table, $createtesttableSQL, 1)), 17);
-                    $newcolumns = '';
-                    $oldcolumns = '';
-                    reset($newcols);
-                    while (list($key, $val) = each($newcols)) {
-                        $newcolumns.= ($newcolumns ? ', ' : '') . $val;
-                        $oldcolumns.= ($oldcolumns ? ', ' : '') . $key;
-                    }
-                    $copytonewsql = 'INSERT INTO ' . $table . '(' . $newcolumns . ') SELECT ' . $oldcolumns . ' FROM ' . $tmpname;
+$createnewtableSQL = 'CREATE ' . substr(trim(preg_replace("'" . $tmpname . "'", $table, $createtesttableSQL, 1)), 17);
+$newcolumns = '';
+$oldcolumns = '';
+reset($newcols);
+while (list($key, $val) = each($newcols)) {
+    $newcolumns.= ($newcolumns ? ', ' : '') . $val;
+    $oldcolumns.= ($oldcolumns ? ', ' : '') . $key;
+}
+$copytonewsql = 'INSERT INTO ' . $table . '(' . $newcolumns . ') SELECT ' . $oldcolumns . ' FROM ' . $tmpname;
                     $this->query($createtemptableSQL); //create temp table
                     $this->query($copytotempsql); //copy to table
                     $this->query($dropoldsql); //drop old table
@@ -718,90 +688,90 @@ class Database {
                     $temp = $this->selectArray($query);
                     $cols = array();
                     for ($z = 0;$z < sizeof($temp);$z++) $cols[$z] = $temp[$z][1];
-                    if ($fields_in_first_row) {
-                        for ($z = 0;$z < sizeof($cols);$z++) {
-                            echo $field_enclosed . $cols[$z] . $field_enclosed . $field_terminate;
+                        if ($fields_in_first_row) {
+                            for ($z = 0;$z < sizeof($cols);$z++) {
+                                echo $field_enclosed . $cols[$z] . $field_enclosed . $field_terminate;
+                            }
+                            echo "\r\n";
                         }
-                        echo "\r\n";
-                    }
-                    $query = "SELECT * FROM " . $result[$i]['tbl_name'];
-                    $arr = $this->selectArray($query, "assoc");
-                    for ($z = 0;$z < sizeof($arr);$z++) {
-                        for ($y = 0;$y < sizeof($cols);$y++) {
-                            if ($arr[$z][$cols[$y]] == NULL) $arr[$z][$cols[$y]] = $null;
-                            echo $field_enclosed . $arr[$z][$cols[$y]] . $field_enclosed . $field_terminate;
-                        }
-                        if ($z < sizeof($arr) - 1) echo "\r\n";
-                    }
-                }
-                if ($i < sizeof($result) - 1) echo "\r\n";
-            }
-        }
-        //export sql
-        public function export_sql($tables, $drop, $structure, $data, $transaction, $comments) {
-            if ($comments) {
-                echo "----\r\n";
-                echo "-- phpLiteAdmin database dump (http://phpliteadmin.googlecode.com)\r\n";
-                echo "-- phpLiteAdmin version: " . VERSION . "\r\n";
-                echo "-- Exported on " . date('M jS, Y, h:i:sA') . "\r\n";
-                echo "-- Database file: " . $this->getPath() . "\r\n";
-                echo "----\r\n";
-            }
-            $query = "SELECT * FROM sqlite_master WHERE type='table' OR type='index' ORDER BY type DESC";
-            $result = $this->selectArray($query);
-            //iterate through each table
-            for ($i = 0;$i < sizeof($result);$i++) {
-                $valid = false;
-                for ($j = 0;$j < sizeof($tables);$j++) {
-                    if ($result[$i]['tbl_name'] == $tables[$j]) $valid = true;
-                }
-                if ($valid) {
-                    if ($drop) {
-                        if ($comments) {
-                            echo "\r\n----\r\n";
-                            if ($result[$i]['type'] == "table") echo "-- Drop table for " . $result[$i]['tbl_name'] . "\r\n";
-                            else echo "-- Drop index for " . $result[$i]['name'] . "\r\n";
-                            echo "----\r\n";
-                        }
-                        if ($result[$i]['type'] == "table") echo "DROP TABLE '" . $result[$i]['tbl_name'] . "';\r\n";
-                        else echo "DROP INDEX '" . $result[$i]['name'] . "';\r\n";
-                    }
-                    if ($structure) {
-                        if ($comments) {
-                            echo "\r\n----\r\n";
-                            if ($result[$i]['type'] == "table") echo "-- Table structure for " . $result[$i]['tbl_name'] . "\r\n";
-                            else echo "-- Structure for index " . $result[$i]['name'] . " on table " . $result[$i]['tbl_name'] . "\r\n";
-                            echo "----\r\n";
-                        }
-                        echo $result[$i]['sql'] . ";\r\n";
-                    }
-                    if ($data && $result[$i]['type'] == "table") {
                         $query = "SELECT * FROM " . $result[$i]['tbl_name'];
                         $arr = $this->selectArray($query, "assoc");
-                        if ($comments) {
-                            echo "\r\n----\r\n";
-                            echo "-- Data dump for " . $result[$i]['tbl_name'] . ", a total of " . sizeof($arr) . " rows\r\n";
-                            echo "----\r\n";
-                        }
-                        $query = "PRAGMA table_info('" . $result[$i]['tbl_name'] . "')";
-                        $temp = $this->selectArray($query);
-                        $cols = array();
-                        $vals = array();
-                        for ($z = 0;$z < sizeof($temp);$z++) $cols[$z] = $temp[$z][1];
                         for ($z = 0;$z < sizeof($arr);$z++) {
                             for ($y = 0;$y < sizeof($cols);$y++) {
-                                if (!isset($vals[$z])) $vals[$z] = array();
-                                $vals[$z][$cols[$y]] = $this->quote($arr[$z][$cols[$y]]);
+                                if ($arr[$z][$cols[$y]] == NULL) $arr[$z][$cols[$y]] = $null;
+                                echo $field_enclosed . $arr[$z][$cols[$y]] . $field_enclosed . $field_terminate;
+                            }
+                            if ($z < sizeof($arr) - 1) echo "\r\n";
+                        }
+                    }
+                    if ($i < sizeof($result) - 1) echo "\r\n";
+                }
+            }
+        //export sql
+            public function export_sql($tables, $drop, $structure, $data, $transaction, $comments) {
+                if ($comments) {
+                    echo "----\r\n";
+                    echo "-- phpLiteAdmin database dump (http://phpliteadmin.googlecode.com)\r\n";
+                    echo "-- phpLiteAdmin version: " . VERSION . "\r\n";
+                    echo "-- Exported on " . date('M jS, Y, h:i:sA') . "\r\n";
+                    echo "-- Database file: " . $this->getPath() . "\r\n";
+                    echo "----\r\n";
+                }
+                $query = "SELECT * FROM sqlite_master WHERE type='table' OR type='index' ORDER BY type DESC";
+                $result = $this->selectArray($query);
+            //iterate through each table
+                for ($i = 0;$i < sizeof($result);$i++) {
+                    $valid = false;
+                    for ($j = 0;$j < sizeof($tables);$j++) {
+                        if ($result[$i]['tbl_name'] == $tables[$j]) $valid = true;
+                    }
+                    if ($valid) {
+                        if ($drop) {
+                            if ($comments) {
+                                echo "\r\n----\r\n";
+                                if ($result[$i]['type'] == "table") echo "-- Drop table for " . $result[$i]['tbl_name'] . "\r\n";
+                                else echo "-- Drop index for " . $result[$i]['name'] . "\r\n";
+                                echo "----\r\n";
+                            }
+                            if ($result[$i]['type'] == "table") echo "DROP TABLE '" . $result[$i]['tbl_name'] . "';\r\n";
+                            else echo "DROP INDEX '" . $result[$i]['name'] . "';\r\n";
+                        }
+                        if ($structure) {
+                            if ($comments) {
+                                echo "\r\n----\r\n";
+                                if ($result[$i]['type'] == "table") echo "-- Table structure for " . $result[$i]['tbl_name'] . "\r\n";
+                                else echo "-- Structure for index " . $result[$i]['name'] . " on table " . $result[$i]['tbl_name'] . "\r\n";
+                                echo "----\r\n";
+                            }
+                            echo $result[$i]['sql'] . ";\r\n";
+                        }
+                        if ($data && $result[$i]['type'] == "table") {
+                            $query = "SELECT * FROM " . $result[$i]['tbl_name'];
+                            $arr = $this->selectArray($query, "assoc");
+                            if ($comments) {
+                                echo "\r\n----\r\n";
+                                echo "-- Data dump for " . $result[$i]['tbl_name'] . ", a total of " . sizeof($arr) . " rows\r\n";
+                                echo "----\r\n";
+                            }
+                            $query = "PRAGMA table_info('" . $result[$i]['tbl_name'] . "')";
+                            $temp = $this->selectArray($query);
+                            $cols = array();
+                            $vals = array();
+                            for ($z = 0;$z < sizeof($temp);$z++) $cols[$z] = $temp[$z][1];
+                                for ($z = 0;$z < sizeof($arr);$z++) {
+                                    for ($y = 0;$y < sizeof($cols);$y++) {
+                                        if (!isset($vals[$z])) $vals[$z] = array();
+                                        $vals[$z][$cols[$y]] = $this->quote($arr[$z][$cols[$y]]);
+                                    }
+                                }
+                                if ($transaction) echo "BEGIN TRANSACTION;\r\n";
+                                for ($j = 0;$j < sizeof($vals);$j++) echo "INSERT INTO " . $result[$i]['tbl_name'] . " (" . implode(",", $cols) . ") VALUES (" . implode(",", $vals[$j]) . ");\r\n";
+                                    if ($transaction) echo "COMMIT;\r\n";
                             }
                         }
-                        if ($transaction) echo "BEGIN TRANSACTION;\r\n";
-                        for ($j = 0;$j < sizeof($vals);$j++) echo "INSERT INTO " . $result[$i]['tbl_name'] . " (" . implode(",", $cols) . ") VALUES (" . implode(",", $vals[$j]) . ");\r\n";
-                        if ($transaction) echo "COMMIT;\r\n";
                     }
                 }
             }
-        }
-    }
     $auth = new Authorization(); //create authorization object
     if (isset($_POST['logout'])) //user has attempted to log out
     $auth->revoke();
@@ -865,343 +835,343 @@ class Database {
     }
     // here begins the HTML.
     
-?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-<!-- Copyright 2011 phpLiteAdmin (http://phpliteadmin.googlecode.com) -->
-<meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
-<title><?php echo PROJECT ?></title>
+    ?>
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+    <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <!-- Copyright 2011 phpLiteAdmin (http://phpliteadmin.googlecode.com) -->
+        <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+        <title><?php echo PROJECT ?></title>
 
-<?php
+        <?php
     if (!file_exists("phpliteadmin.css")) //only use the inline stylesheet if an external one does not exist
     {
-?>
-<!-- begin the customizable stylesheet/theme -->
-<style type="text/css">
-/* overall styles for entire page */
-body
-{
-	margin: 0px;
-	padding: 0px;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 14px;
-	color: #000000;
-	background-color: #e0ebf6;
-}
-/* general styles for hyperlink */
-a
-{
-	color: #03F;
-	text-decoration: none;
-	cursor :pointer;
-}
-hr
-{
-	height: 1px;
-	border: 0;
-	color: #bbb;
-	background-color: #bbb;
-	width: 100%;	
-}
-a:hover
-{
-	color: #06F;
-}
-/* logo text containing name of project */
-h1
-{
-	margin: 0px;
-	padding: 5px;
-	font-size: 24px;
-	background-color: #f3cece;
-	text-align: center;
-	color: #000;
-	border-top-left-radius:5px;
-	border-top-right-radius:5px;
-	-moz-border-radius-topleft:5px;
-	-moz-border-radius-topright:5px;
-}
-/* the div container for the links */
-#headerlinks
-{
-	text-align:center;
-	margin-bottom:10px;
-	padding:5px;
-	border-color:#03F;
-	border-width:1px;
-	border-style:solid;
-	border-left-style:none;
-	border-right-style:none;
-	font-size:12px;
-	background-color:#e0ebf6;
-	font-weight:bold;
-}
-/* version text within the logo */
-h1 #version
-{
-	color: #000000;
-	font-size: 16px;
-}
-/* logo text within logo */
-h1 #logo
-{
-	color:#000;
-}
-/* general header for various views */
-h2
-{
-	margin:0px;
-	padding:0px;
-	font-size:14px;
-	margin-bottom:20px;
-}
-/* input buttons and areas for entering text */
-input, select, textarea
-{
-	font-family:Arial, Helvetica, sans-serif;
-	background-color:#eaeaea;
-	color:#03F;
-	border-color:#03F;
-	border-style:solid;
-	border-width:1px;
-	margin:5px;
-	border-radius:5px;
-	-moz-border-radius:5px;
-	padding:3px;
-}
-/* just input buttons */
-input.btn
-{
-	cursor:pointer;	
-}
-input.btn:hover
-{
-	background-color:#ccc;
-}
-/* general styles for hyperlink */
-fieldset
-{
-	padding:15px;
-	border-color:#03F;
-	border-width:1px;
-	border-style:solid;
-	border-radius:5px;
-	-moz-border-radius:5px;
-	background-color:#f9f9f9;
-}
-/* outer div that holds everything */
-#container
-{
-	padding:10px;
-}
-/* div of left box with log, list of databases, etc. */
-#leftNav
-{
-	float:left;
-	min-width:250px;
-	padding:0px;
-	border-color:#03F;
-	border-width:1px;
-	border-style:solid;
-	background-color:#FFF;
-	padding-bottom:15px;
-	border-radius:5px;
-	-moz-border-radius:5px;
-}
-/* div holding the content to the right of the leftNav */
-#content
-{
-	overflow:hidden;
-	padding-left:10px;
-}
-/* div holding the login fields */
-#loginBox
-{
-	width:500px;
-	margin-left:auto;
-	margin-right:auto;
-	margin-top:50px;
-	border-color:#03F;
-	border-width:1px;
-	border-style:solid;
-	background-color:#FFF;
-	border-radius:5px;
-	-moz-border-radius:5px;
-}
-/* div under tabs with tab-specific content */
-#main
-{
-	border-color:#03F;
-	border-width:1px;
-	border-style:solid;
-	padding:15px;
-	overflow:auto;
-	background-color:#FFF;
-	border-bottom-left-radius:5px;
-	border-bottom-right-radius:5px;
-	border-top-right-radius:5px;
-	-moz-border-radius-bottomleft:5px;
-	-moz-border-radius-bottomright:5px;
-	-moz-border-radius-topright:5px;
-}
-/* odd-numbered table rows */
-.td1
-{
-	background-color:#f9e3e3;
-	text-align:right;
-	font-size:12px;
-	padding-left:10px;
-	padding-right:10px;
-}
-/* even-numbered table rows */
-.td2
-{
-	background-color:#f3cece;
-	text-align:right;
-	font-size:12px;
-	padding-left:10px;
-	padding-right:10px;
-}
-/* table column headers */
-.tdheader
-{
-	border-color:#03F;
-	border-width:1px;
-	border-style:solid;
-	font-weight:bold;
-	font-size:12px;
-	padding-left:10px;
-	padding-right:10px;
-	background-color:#e0ebf6;
-	border-radius:5px;
-	-moz-border-radius:5px;
-}
-/* div holding the confirmation text of certain actions */
-.confirm
-{
-	border-color:#03F;
-	border-width:1px;
-	border-style:dashed;
-	padding:15px;
-	background-color:#e0ebf6;
-}
-/* tab navigation for each table */
-.tab
-{
-	display:block;
-	padding:5px;
-	padding-right:8px;
-	padding-left:8px;
-	border-color:#03F;
-	border-width:1px;
-	border-style:solid;
-	margin-right:5px;
-	float:left;
-	border-bottom-style:none;
-	position:relative;
-	top:1px;
-	padding-bottom:4px;
-	background-color:#eaeaea;
-	border-top-left-radius:5px;
-	border-top-right-radius:5px;
-	-moz-border-radius-topleft:5px;
-	-moz-border-radius-topright:5px;
-}
-/* pressed state of tab */
-.tab_pressed
-{
-	display:block;
-	padding:5px;
-	padding-right:8px;
-	padding-left:8px;
-	border-color:#03F;
-	border-width:1px;
-	border-style:solid;
-	margin-right:5px;
-	float:left;
-	border-bottom-style:none;
-	position:relative;
-	top:1px;
-	background-color:#FFF;
-	cursor:default;
-	border-top-left-radius:5px;
-	border-top-right-radius:5px;
-	-moz-border-radius-topleft:5px;
-	-moz-border-radius-topright:5px;
-}
-/* help section */
-.helpq
-{
-	font-size:11px;
-	font-weight:normal;	
-}
-#help_container
-{
-	padding:0px;
-	font-size:12px;
-	margin-left:auto;
-	margin-right:auto;
-	background-color:#ffffff;
-}
-.help_outer
-{
-	background-color:#FFF;
-	padding:0px;
-	height:300px;
-	overflow:hidden;
-	position:relative;
-}
-.help_list
-{
-	padding:10px;
-	height:auto;	
-}
+        ?>
+        <!-- begin the customizable stylesheet/theme -->
+        <style type="text/css">
+            /* overall styles for entire page */
+            body
+            {
+               margin: 0px;
+               padding: 0px;
+               font-family: Arial, Helvetica, sans-serif;
+               font-size: 14px;
+               color: #000000;
+               background-color: #e0ebf6;
+           }
+           /* general styles for hyperlink */
+           a
+           {
+               color: #03F;
+               text-decoration: none;
+               cursor :pointer;
+           }
+           hr
+           {
+               height: 1px;
+               border: 0;
+               color: #bbb;
+               background-color: #bbb;
+               width: 100%;	
+           }
+           a:hover
+           {
+               color: #06F;
+           }
+           /* logo text containing name of project */
+           h1
+           {
+               margin: 0px;
+               padding: 5px;
+               font-size: 24px;
+               background-color: #f3cece;
+               text-align: center;
+               color: #000;
+               border-top-left-radius:5px;
+               border-top-right-radius:5px;
+               -moz-border-radius-topleft:5px;
+               -moz-border-radius-topright:5px;
+           }
+           /* the div container for the links */
+           #headerlinks
+           {
+               text-align:center;
+               margin-bottom:10px;
+               padding:5px;
+               border-color:#03F;
+               border-width:1px;
+               border-style:solid;
+               border-left-style:none;
+               border-right-style:none;
+               font-size:12px;
+               background-color:#e0ebf6;
+               font-weight:bold;
+           }
+           /* version text within the logo */
+           h1 #version
+           {
+               color: #000000;
+               font-size: 16px;
+           }
+           /* logo text within logo */
+           h1 #logo
+           {
+               color:#000;
+           }
+           /* general header for various views */
+           h2
+           {
+               margin:0px;
+               padding:0px;
+               font-size:14px;
+               margin-bottom:20px;
+           }
+           /* input buttons and areas for entering text */
+           input, select, textarea
+           {
+               font-family:Arial, Helvetica, sans-serif;
+               background-color:#eaeaea;
+               color:#03F;
+               border-color:#03F;
+               border-style:solid;
+               border-width:1px;
+               margin:5px;
+               border-radius:5px;
+               -moz-border-radius:5px;
+               padding:3px;
+           }
+           /* just input buttons */
+           input.btn
+           {
+               cursor:pointer;	
+           }
+           input.btn:hover
+           {
+               background-color:#ccc;
+           }
+           /* general styles for hyperlink */
+           fieldset
+           {
+               padding:15px;
+               border-color:#03F;
+               border-width:1px;
+               border-style:solid;
+               border-radius:5px;
+               -moz-border-radius:5px;
+               background-color:#f9f9f9;
+           }
+           /* outer div that holds everything */
+           #container
+           {
+               padding:10px;
+           }
+           /* div of left box with log, list of databases, etc. */
+           #leftNav
+           {
+               float:left;
+               min-width:250px;
+               padding:0px;
+               border-color:#03F;
+               border-width:1px;
+               border-style:solid;
+               background-color:#FFF;
+               padding-bottom:15px;
+               border-radius:5px;
+               -moz-border-radius:5px;
+           }
+           /* div holding the content to the right of the leftNav */
+           #content
+           {
+               overflow:hidden;
+               padding-left:10px;
+           }
+           /* div holding the login fields */
+           #loginBox
+           {
+               width:500px;
+               margin-left:auto;
+               margin-right:auto;
+               margin-top:50px;
+               border-color:#03F;
+               border-width:1px;
+               border-style:solid;
+               background-color:#FFF;
+               border-radius:5px;
+               -moz-border-radius:5px;
+           }
+           /* div under tabs with tab-specific content */
+           #main
+           {
+               border-color:#03F;
+               border-width:1px;
+               border-style:solid;
+               padding:15px;
+               overflow:auto;
+               background-color:#FFF;
+               border-bottom-left-radius:5px;
+               border-bottom-right-radius:5px;
+               border-top-right-radius:5px;
+               -moz-border-radius-bottomleft:5px;
+               -moz-border-radius-bottomright:5px;
+               -moz-border-radius-topright:5px;
+           }
+           /* odd-numbered table rows */
+           .td1
+           {
+               background-color:#f9e3e3;
+               text-align:right;
+               font-size:12px;
+               padding-left:10px;
+               padding-right:10px;
+           }
+           /* even-numbered table rows */
+           .td2
+           {
+               background-color:#f3cece;
+               text-align:right;
+               font-size:12px;
+               padding-left:10px;
+               padding-right:10px;
+           }
+           /* table column headers */
+           .tdheader
+           {
+               border-color:#03F;
+               border-width:1px;
+               border-style:solid;
+               font-weight:bold;
+               font-size:12px;
+               padding-left:10px;
+               padding-right:10px;
+               background-color:#e0ebf6;
+               border-radius:5px;
+               -moz-border-radius:5px;
+           }
+           /* div holding the confirmation text of certain actions */
+           .confirm
+           {
+               border-color:#03F;
+               border-width:1px;
+               border-style:dashed;
+               padding:15px;
+               background-color:#e0ebf6;
+           }
+           /* tab navigation for each table */
+           .tab
+           {
+               display:block;
+               padding:5px;
+               padding-right:8px;
+               padding-left:8px;
+               border-color:#03F;
+               border-width:1px;
+               border-style:solid;
+               margin-right:5px;
+               float:left;
+               border-bottom-style:none;
+               position:relative;
+               top:1px;
+               padding-bottom:4px;
+               background-color:#eaeaea;
+               border-top-left-radius:5px;
+               border-top-right-radius:5px;
+               -moz-border-radius-topleft:5px;
+               -moz-border-radius-topright:5px;
+           }
+           /* pressed state of tab */
+           .tab_pressed
+           {
+               display:block;
+               padding:5px;
+               padding-right:8px;
+               padding-left:8px;
+               border-color:#03F;
+               border-width:1px;
+               border-style:solid;
+               margin-right:5px;
+               float:left;
+               border-bottom-style:none;
+               position:relative;
+               top:1px;
+               background-color:#FFF;
+               cursor:default;
+               border-top-left-radius:5px;
+               border-top-right-radius:5px;
+               -moz-border-radius-topleft:5px;
+               -moz-border-radius-topright:5px;
+           }
+           /* help section */
+           .helpq
+           {
+               font-size:11px;
+               font-weight:normal;	
+           }
+           #help_container
+           {
+               padding:0px;
+               font-size:12px;
+               margin-left:auto;
+               margin-right:auto;
+               background-color:#ffffff;
+           }
+           .help_outer
+           {
+               background-color:#FFF;
+               padding:0px;
+               height:300px;
+               overflow:hidden;
+               position:relative;
+           }
+           .help_list
+           {
+               padding:10px;
+               height:auto;	
+           }
 
-.headd
-{
-	font-size:14px;
-	font-weight:bold;	
-	display:block;
-	padding:10px;
-	background-color:#e0ebf6;
-	border-color:#03F;
-	border-width:1px;
-	border-style:solid;
-	border-left-style:none;
-	border-right-style:none;
-}
-.help_inner
-{
-	padding:10px;	
-}
-.help_top
-{
-	display:block;
-	position:absolute;
-	right:10px;
-	bottom:10px;	
-}
-</style>
-<!-- end the customizable stylesheet/theme -->
-<?php
-    } else
+           .headd
+           {
+               font-size:14px;
+               font-weight:bold;	
+               display:block;
+               padding:10px;
+               background-color:#e0ebf6;
+               border-color:#03F;
+               border-width:1px;
+               border-style:solid;
+               border-left-style:none;
+               border-right-style:none;
+           }
+           .help_inner
+           {
+               padding:10px;	
+           }
+           .help_top
+           {
+               display:block;
+               position:absolute;
+               right:10px;
+               bottom:10px;	
+           }
+       </style>
+       <!-- end the customizable stylesheet/theme -->
+       <?php
+   } else
     //an external stylesheet exists - import it
-    {
-        echo "<link href='phpliteadmin.css' rel='stylesheet' type='text/css' />";
-    }
+   {
+    echo "<link href='phpliteadmin.css' rel='stylesheet' type='text/css' />";
+}
     if (isset($_GET['help'])) //this page is used as the popup help section
     {
         //help section array
         $help = array('SQLite Library Extensions' => 'phpLiteAdmin uses PHP library extensions that allow interaction with SQLite databases. Currently, phpLiteAdmin supports PDO, SQLite3, and SQLiteDatabase. Both PDO and SQLite3 deal with version 3 of SQLite, while SQLiteDatabase deals with version 2. So, if your PHP installation includes more than one SQLite library extension, PDO and SQLite3 will take precedence to make use of the better technology. However, if you have existing databases that are of version 2 of SQLite, phpLiteAdmin will be forced to use SQLiteDatabase for only those databases. Not all databases need to be of the same version. During the database creation, however, the most advanced extension will be used.', 'Creating a New Database' => 'When you create a new database, the name you entered will be appended with the appropriate file extension (.db, .db3, .sqlite, etc.) if you do not include it yourself. The database will be created in the directory you specified as the $directory variable.', 'Tables vs. Views' => 'On the main database page, there is a list of tables and views. Since views are read-only, certain operations will be disabled. These disabled operations will be apparent by their omission in the location where they should appear on the row for a view. If you want to change the data for a view, you need to drop that view and create a new view with the appropriate SELECT statement that queries other existing tables. For more information, see <a href="http://en.wikipedia.org/wiki/View_(database)" target="_blank">http://en.wikipedia.org/wiki/View_(database)</a>', 'Writing a Select Statement for a New View' => 'When you create a new view, you must write an SQL SELECT statement that it will use as its data. A view is simply a read-only table that can be accessed and queried like a regular table, except it cannot be modified through insertion, column editing, or row editing. It is only used for conveniently fetching data.', 'Export Structure to SQL File' => 'During the process for exporting to an SQL file, you may choose to include the queries that create the table and columns.', 'Export Data to SQL File' => 'During the process for exporting to an SQL file, you may choose to include the queries that populate the table(s) with the current records of the table(s).', 'Add Drop Table to Exported SQL File' => 'During the process for exporting to an SQL file, you may choose to include queries to DROP the existing tables before adding them so that problems do not occur when trying to create tables that already exist.', 'Add Transaction to Exported SQL File' => 'During the process for exporting to an SQL file, you may choose to wrap the queries around a TRANSACTION so that if an error occurs at any time during the importation process using the exported file, the database can be reverted to its previous state, preventing partially updated data from populating the database.', 'Add Comments to Exported SQL File' => 'During the process for exporting to an SQL file, you may choose to include comments that explain each step of the process so that a human can better understand what is happening.',);
-?>
-	</head>
-	<body>
-	<div id='help_container'>
-	<?php
-        echo "<div class='help_list'>";
-        echo "<span style='font-size:18px;'>" . PROJECT . " v" . VERSION . " Help Documentation</span><br/><br/>";
-        foreach ((array)$help as $key => $val) {
+        ?>
+    </head>
+    <body>
+       <div id='help_container'>
+           <?php
+           echo "<div class='help_list'>";
+           echo "<span style='font-size:18px;'>" . PROJECT . " v" . VERSION . " Help Documentation</span><br/><br/>";
+           foreach ((array)$help as $key => $val) {
             echo "<a href='#" . $key . "'>" . $key . "</a><br/>";
         }
         echo "</div>";
@@ -1215,13 +1185,13 @@ fieldset
             echo "<a class='help_top' href='#top'>Back to Top</a>";
             echo "</div>";
         }
-?>
-	</div>
-	</body>
-	</html>
-	<?php
-        exit();
-    }
+        ?>
+    </div>
+</body>
+</html>
+<?php
+exit();
+}
 ?>
 <!-- JavaScript Support -->
 <script type="text/javascript">
@@ -1291,9 +1261,9 @@ function moveFields()
 	for(var i=0; i<fields.options.length; i++)
 		if(fields.options[i].selected)
 			selected.push(fields.options[i].value);
-	for(var i=0; i<selected.length; i++)
-		insertAtCaret("queryval", selected[i]);
-}
+       for(var i=0; i<selected.length; i++)
+          insertAtCaret("queryval", selected[i]);
+  }
 //helper function for moveFields
 function insertAtCaret(areaId,text)
 {
@@ -1379,7 +1349,7 @@ function PopupCenter(pageURL, title)
 </script>
 </head>
 <body>
-<?php
+    <?php
     if (ini_get("register_globals")) //check whether register_globals is turned on - if it is, we need to not continue
     {
         echo "<div class='confirm' style='margin:20px;'>";
@@ -1448,11 +1418,11 @@ function PopupCenter(pageURL, title)
             switch ($_GET['action']) {
                     //table actions
                     /////////////////////////////////////////////// create table
-                    
+                
                 case "table_create":
-                    $num = intval($_POST['rows']);
-                    $name = $_POST['tablename'];
-                    $query = "CREATE TABLE " . $name . "(";
+                $num = intval($_POST['rows']);
+                $name = $_POST['tablename'];
+                $query = "CREATE TABLE " . $name . "(";
                     for ($i = 0;$i < $num;$i++) {
                         if ($_POST[$i . '_field'] != "") {
                             $query.= $_POST[$i . '_field'] . " ";
@@ -1469,282 +1439,282 @@ function PopupCenter(pageURL, title)
                     }
                     $query = substr($query, 0, sizeof($query) - 3);
                     $query.= ")";
-                    $result = $db->query($query);
-                    if (!$result) $error = true;
-                    $completed = "Table '" . $_POST['tablename'] . "' has been created.<br/><span style='font-size:11px;'>" . $query . "</span>";
-                    break;
+$result = $db->query($query);
+if (!$result) $error = true;
+$completed = "Table '" . $_POST['tablename'] . "' has been created.<br/><span style='font-size:11px;'>" . $query . "</span>";
+break;
                     /////////////////////////////////////////////// empty table
-                    
-                case "table_empty":
-                    $query = "DELETE FROM " . $_POST['tablename'];
-                    $result = $db->query($query);
-                    if (!$result) $error = true;
-                    $query = "VACUUM";
-                    $result = $db->query($query);
-                    if (!$result) $error = true;
-                    $completed = "Table '" . $_POST['tablename'] . "' has been emptied.<br/><span style='font-size:11px;'>" . $query . "</span>";
-                    break;
+
+case "table_empty":
+$query = "DELETE FROM " . $_POST['tablename'];
+$result = $db->query($query);
+if (!$result) $error = true;
+$query = "VACUUM";
+$result = $db->query($query);
+if (!$result) $error = true;
+$completed = "Table '" . $_POST['tablename'] . "' has been emptied.<br/><span style='font-size:11px;'>" . $query . "</span>";
+break;
                     /////////////////////////////////////////////// create view
-                    
-                case "view_create":
-                    $query = "CREATE VIEW " . $_POST['viewname'] . " AS " . stripslashes($_POST['select']);
-                    $result = $db->query($query);
-                    if (!$result) $error = true;
-                    $completed = "View '" . $_POST['viewname'] . "' has been created.<br/><span style='font-size:11px;'>" . $query . "</span>";
-                    break;
+
+case "view_create":
+$query = "CREATE VIEW " . $_POST['viewname'] . " AS " . stripslashes($_POST['select']);
+$result = $db->query($query);
+if (!$result) $error = true;
+$completed = "View '" . $_POST['viewname'] . "' has been created.<br/><span style='font-size:11px;'>" . $query . "</span>";
+break;
                     /////////////////////////////////////////////// drop table
-                    
-                case "table_drop":
-                    $query = "DROP TABLE " . $_POST['tablename'];
-                    $db->query($query);
-                    $completed = "Table '" . $_POST['tablename'] . "' has been dropped.";
-                    break;
+
+case "table_drop":
+$query = "DROP TABLE " . $_POST['tablename'];
+$db->query($query);
+$completed = "Table '" . $_POST['tablename'] . "' has been dropped.";
+break;
                     /////////////////////////////////////////////// drop view
-                    
-                case "view_drop":
-                    $query = "DROP VIEW " . $_POST['viewname'];
-                    $db->query($query);
-                    $completed = "View '" . $_POST['viewname'] . "' has been dropped.";
-                    break;
+
+case "view_drop":
+$query = "DROP VIEW " . $_POST['viewname'];
+$db->query($query);
+$completed = "View '" . $_POST['viewname'] . "' has been dropped.";
+break;
                     /////////////////////////////////////////////// rename table
-                    
-                case "table_rename":
-                    $query = "ALTER TABLE " . $_POST['oldname'] . " RENAME TO " . $_POST['newname'];
-                    if ($db->getVersion() == 3) $result = $db->query($query, true);
-                    else $result = $db->query($query, false);
-                    if (!$result) $error = true;
-                    $completed = "Table '" . $_POST['oldname'] . "' has been renamed to '" . $_POST['newname'] . "'.<br/><span style='font-size:11px;'>" . $query . "</span>";
-                    break;
+
+case "table_rename":
+$query = "ALTER TABLE " . $_POST['oldname'] . " RENAME TO " . $_POST['newname'];
+if ($db->getVersion() == 3) $result = $db->query($query, true);
+else $result = $db->query($query, false);
+if (!$result) $error = true;
+$completed = "Table '" . $_POST['oldname'] . "' has been renamed to '" . $_POST['newname'] . "'.<br/><span style='font-size:11px;'>" . $query . "</span>";
+break;
                     //row actions
                     /////////////////////////////////////////////// create row
-                    
-                case "row_create":
-                    $completed = "";
-                    $num = $_POST['numRows'];
-                    $fields = explode(":", $_POST['fields']);
-                    $z = 0;
-                    $query = "PRAGMA table_info('" . $_GET['table'] . "')";
-                    $result = $db->selectArray($query);
-                    for ($i = 0;$i < $num;$i++) {
-                        if (!isset($_POST[$i . ":ignore"])) {
-                            $query = "INSERT INTO " . $_GET['table'] . " (";
-                            for ($j = 0;$j < sizeof($fields);$j++) {
-                                $query.= $fields[$j] . ",";
-                            }
-                            $query = substr($query, 0, sizeof($query) - 2);
-                            $query.= ") VALUES (";
-                            for ($j = 0;$j < sizeof($fields);$j++) {
-                                $value = $_POST[$i . ":" . $fields[$j]];
-                                $null = isset($_POST[$i . ":" . $fields[$j] . "_null"]);
-                                $type = $result[$j][2];
-                                $function = $_POST["function_" . $i . "_" . $fields[$j]];
-                                if ($function != "") $query.= $function . "(";
+
+case "row_create":
+$completed = "";
+$num = $_POST['numRows'];
+$fields = explode(":", $_POST['fields']);
+$z = 0;
+$query = "PRAGMA table_info('" . $_GET['table'] . "')";
+$result = $db->selectArray($query);
+for ($i = 0;$i < $num;$i++) {
+    if (!isset($_POST[$i . ":ignore"])) {
+        $query = "INSERT INTO " . $_GET['table'] . " (";
+            for ($j = 0;$j < sizeof($fields);$j++) {
+                $query.= $fields[$j] . ",";
+            }
+            $query = substr($query, 0, sizeof($query) - 2);
+            $query.= ") VALUES (";
+            for ($j = 0;$j < sizeof($fields);$j++) {
+                $value = $_POST[$i . ":" . $fields[$j]];
+                $null = isset($_POST[$i . ":" . $fields[$j] . "_null"]);
+                $type = $result[$j][2];
+                $function = $_POST["function_" . $i . "_" . $fields[$j]];
+                if ($function != "") $query.= $function . "(";
                                 //di - messed around with this logic for null values
-                                if (($type == "TEXT" || $type == "BLOB") && $null == false) $query.= $db->quote($value);
-                                else if (($type == "INTEGER" || $type == "REAL") && $null == false && $value == "") $query.= "NULL";
-                                else if ($null == true) $query.= "NULL";
-                                else $query.= $db->quote($value);
-                                if ($function != "") $query.= ")";
-                                $query.= ",";
-                            }
-                            $query = substr($query, 0, sizeof($query) - 2);
-                            $query.= ")";
-                            $result1 = $db->query($query);
-                            if (!$result1) $error = true;
-                            $completed.= "<span style='font-size:11px;'>" . $query . "</span><br/>";
-                            $z++;
-                        }
-                    }
-                    $completed = $z . " row(s) inserted.<br/><br/>" . $completed;
-                    break;
+                    if (($type == "TEXT" || $type == "BLOB") && $null == false) $query.= $db->quote($value);
+                    else if (($type == "INTEGER" || $type == "REAL") && $null == false && $value == "") $query.= "NULL";
+                    else if ($null == true) $query.= "NULL";
+                    else $query.= $db->quote($value);
+                    if ($function != "") $query.= ")";
+$query.= ",";
+}
+$query = substr($query, 0, sizeof($query) - 2);
+$query.= ")";
+$result1 = $db->query($query);
+if (!$result1) $error = true;
+$completed.= "<span style='font-size:11px;'>" . $query . "</span><br/>";
+$z++;
+}
+}
+$completed = $z . " row(s) inserted.<br/><br/>" . $completed;
+break;
                     /////////////////////////////////////////////// delete row
-                    
-                case "row_delete":
-                    $pks = explode(":", $_GET['pk']);
-                    $str = $pks[0];
-                    $query = "DELETE FROM " . $_GET['table'] . " WHERE ROWID = " . $pks[0];
-                    for ($i = 1;$i < sizeof($pks);$i++) {
-                        $str.= ", " . $pks[$i];
-                        $query.= " OR ROWID = " . $pks[$i];
-                    }
-                    $result = $db->query($query);
-                    if (!$result) $error = true;
-                    $completed = sizeof($pks) . " row(s) deleted.<br/><span style='font-size:11px;'>" . $query . "</span>";
-                    break;
+
+case "row_delete":
+$pks = explode(":", $_GET['pk']);
+$str = $pks[0];
+$query = "DELETE FROM " . $_GET['table'] . " WHERE ROWID = " . $pks[0];
+for ($i = 1;$i < sizeof($pks);$i++) {
+    $str.= ", " . $pks[$i];
+    $query.= " OR ROWID = " . $pks[$i];
+}
+$result = $db->query($query);
+if (!$result) $error = true;
+$completed = sizeof($pks) . " row(s) deleted.<br/><span style='font-size:11px;'>" . $query . "</span>";
+break;
                     /////////////////////////////////////////////// edit row
-                    
-                case "row_edit":
-                    $pks = explode(":", $_GET['pk']);
-                    $fields = explode(":", $_POST['fieldArray']);
-                    $z = 0;
-                    $query = "PRAGMA table_info('" . $_GET['table'] . "')";
-                    $result = $db->selectArray($query);
-                    if (isset($_POST['new_row'])) $completed = "";
-                    else $completed = sizeof($pks) . " row(s) affected.<br/><br/>";
-                    for ($i = 0;$i < sizeof($pks);$i++) {
-                        if (isset($_POST['new_row'])) {
-                            $query = "INSERT INTO " . $_GET['table'] . " (";
-                            for ($j = 0;$j < sizeof($fields);$j++) {
-                                $query.= $fields[$j] . ",";
-                            }
-                            $query = substr($query, 0, sizeof($query) - 2);
-                            $query.= ") VALUES (";
-                            for ($j = 0;$j < sizeof($fields);$j++) {
-                                $value = $_POST[$pks[$i] . ":" . $fields[$j]];
-                                $null = isset($_POST[$pks[$i] . ":" . $fields[$j] . "_null"]);
-                                $type = $result[$j][2];
-                                $function = $_POST["function_" . $pks[$i] . "_" . $fields[$j]];
-                                if ($function != "") $query.= $function . "(";
+
+case "row_edit":
+$pks = explode(":", $_GET['pk']);
+$fields = explode(":", $_POST['fieldArray']);
+$z = 0;
+$query = "PRAGMA table_info('" . $_GET['table'] . "')";
+$result = $db->selectArray($query);
+if (isset($_POST['new_row'])) $completed = "";
+else $completed = sizeof($pks) . " row(s) affected.<br/><br/>";
+for ($i = 0;$i < sizeof($pks);$i++) {
+    if (isset($_POST['new_row'])) {
+        $query = "INSERT INTO " . $_GET['table'] . " (";
+            for ($j = 0;$j < sizeof($fields);$j++) {
+                $query.= $fields[$j] . ",";
+            }
+            $query = substr($query, 0, sizeof($query) - 2);
+            $query.= ") VALUES (";
+            for ($j = 0;$j < sizeof($fields);$j++) {
+                $value = $_POST[$pks[$i] . ":" . $fields[$j]];
+                $null = isset($_POST[$pks[$i] . ":" . $fields[$j] . "_null"]);
+                $type = $result[$j][2];
+                $function = $_POST["function_" . $pks[$i] . "_" . $fields[$j]];
+                if ($function != "") $query.= $function . "(";
                                 //di - messed around with this logic for null values
-                                if (($type == "TEXT" || $type == "BLOB") && $null == false) $query.= $db->quote($value);
-                                else if (($type == "INTEGER" || $type == "REAL") && $null == false && $value == "") $query.= "NULL";
-                                else if ($null == true) $query.= "NULL";
-                                else $query.= $db->quote($value);
-                                if ($function != "") $query.= ")";
-                                $query.= ",";
-                            }
-                            $query = substr($query, 0, sizeof($query) - 2);
-                            $query.= ")";
-                            $result1 = $db->query($query);
-                            if (!$result1) $error = true;
-                            $z++;
-                        } else {
-                            $query = "UPDATE " . $_GET['table'] . " SET ";
-                            for ($j = 0;$j < sizeof($fields);$j++) {
-                                $function = $_POST["function_" . $pks[$i] . "_" . $fields[$j]];
-                                $null = isset($_POST[$pks[$i] . ":" . $fields[$j] . "_null"]);
-                                $query.= $fields[$j] . "=";
-                                if ($function != "") $query.= $function . "(";
-                                if ($null) $query.= "NULL";
-                                else $query.= $db->quote($_POST[$pks[$i] . ":" . $fields[$j]]);
-                                if ($function != "") $query.= ")";
-                                $query.= ", ";
-                            }
-                            $query = substr($query, 0, sizeof($query) - 3);
-                            $query.= " WHERE ROWID = " . $pks[$i];
-                            $result1 = $db->query($query);
-                            if (!$result1) {
-                                $error = true;
-                            }
-                        }
-                        $completed.= "<span style='font-size:11px;'>" . $query . "</span><br/>";
-                    }
-                    if (isset($_POST['new_row'])) $completed = $z . " row(s) inserted.<br/><br/>" . $completed;
-                    break;
+                    if (($type == "TEXT" || $type == "BLOB") && $null == false) $query.= $db->quote($value);
+                    else if (($type == "INTEGER" || $type == "REAL") && $null == false && $value == "") $query.= "NULL";
+                    else if ($null == true) $query.= "NULL";
+                    else $query.= $db->quote($value);
+                    if ($function != "") $query.= ")";
+$query.= ",";
+}
+$query = substr($query, 0, sizeof($query) - 2);
+$query.= ")";
+$result1 = $db->query($query);
+if (!$result1) $error = true;
+$z++;
+} else {
+    $query = "UPDATE " . $_GET['table'] . " SET ";
+    for ($j = 0;$j < sizeof($fields);$j++) {
+        $function = $_POST["function_" . $pks[$i] . "_" . $fields[$j]];
+        $null = isset($_POST[$pks[$i] . ":" . $fields[$j] . "_null"]);
+        $query.= $fields[$j] . "=";
+        if ($function != "") $query.= $function . "(";
+            if ($null) $query.= "NULL";
+            else $query.= $db->quote($_POST[$pks[$i] . ":" . $fields[$j]]);
+            if ($function != "") $query.= ")";
+$query.= ", ";
+}
+$query = substr($query, 0, sizeof($query) - 3);
+$query.= " WHERE ROWID = " . $pks[$i];
+$result1 = $db->query($query);
+if (!$result1) {
+    $error = true;
+}
+}
+$completed.= "<span style='font-size:11px;'>" . $query . "</span><br/>";
+}
+if (isset($_POST['new_row'])) $completed = $z . " row(s) inserted.<br/><br/>" . $completed;
+break;
                     //column actions
                     /////////////////////////////////////////////// create column
-                    
-                case "column_create":
-                    $num = intval($_POST['rows']);
-                    for ($i = 0;$i < $num;$i++) {
-                        if ($_POST[$i . '_field'] != "") {
-                            $query = "ALTER TABLE " . $_GET['table'] . " ADD " . $_POST[$i . '_field'] . " ";
-                            $query.= $_POST[$i . '_type'] . " ";
-                            if (isset($_POST[$i . '_primarykey'])) $query.= "PRIMARY KEY ";
-                            if (isset($_POST[$i . '_notnull'])) $query.= "NOT NULL ";
-                            if ($_POST[$i . '_defaultvalue'] != "") {
-                                if ($_POST[$i . '_type'] == "INTEGER") $query.= "DEFAULT " . $_POST[$i . '_defaultvalue'] . "  ";
-                                else $query.= "DEFAULT '" . $_POST[$i . '_defaultvalue'] . "' ";
-                            }
-                            if ($db->getVersion() == 3) $result = $db->query($query, true);
-                            else $result = $db->query($query, false);
-                            if (!$result) $error = true;
-                        }
-                    }
-                    $completed = "Table '" . $_GET['table'] . "' has been altered successfully.";
-                    break;
+
+case "column_create":
+$num = intval($_POST['rows']);
+for ($i = 0;$i < $num;$i++) {
+    if ($_POST[$i . '_field'] != "") {
+        $query = "ALTER TABLE " . $_GET['table'] . " ADD " . $_POST[$i . '_field'] . " ";
+        $query.= $_POST[$i . '_type'] . " ";
+        if (isset($_POST[$i . '_primarykey'])) $query.= "PRIMARY KEY ";
+        if (isset($_POST[$i . '_notnull'])) $query.= "NOT NULL ";
+        if ($_POST[$i . '_defaultvalue'] != "") {
+            if ($_POST[$i . '_type'] == "INTEGER") $query.= "DEFAULT " . $_POST[$i . '_defaultvalue'] . "  ";
+            else $query.= "DEFAULT '" . $_POST[$i . '_defaultvalue'] . "' ";
+        }
+        if ($db->getVersion() == 3) $result = $db->query($query, true);
+        else $result = $db->query($query, false);
+        if (!$result) $error = true;
+    }
+}
+$completed = "Table '" . $_GET['table'] . "' has been altered successfully.";
+break;
                     /////////////////////////////////////////////// delete column
-                    
-                case "column_delete":
-                    $pks = explode(":", $_GET['pk']);
-                    $str = $pks[0];
-                    $query = "ALTER TABLE " . $_GET['table'] . " DROP " . $pks[0];
-                    for ($i = 1;$i < sizeof($pks);$i++) {
-                        $str.= ", " . $pks[$i];
-                        $query.= ", DROP " . $pks[$i];
-                    }
-                    $result = $db->query($query);
-                    if (!$result) $error = true;
-                    $completed = "Table '" . $_GET['table'] . "' has been altered successfully.";
-                    break;
+
+case "column_delete":
+$pks = explode(":", $_GET['pk']);
+$str = $pks[0];
+$query = "ALTER TABLE " . $_GET['table'] . " DROP " . $pks[0];
+for ($i = 1;$i < sizeof($pks);$i++) {
+    $str.= ", " . $pks[$i];
+    $query.= ", DROP " . $pks[$i];
+}
+$result = $db->query($query);
+if (!$result) $error = true;
+$completed = "Table '" . $_GET['table'] . "' has been altered successfully.";
+break;
                     /////////////////////////////////////////////// edit column
-                    
-                case "column_edit":
-                    $query = "ALTER TABLE " . $_GET['table'] . " CHANGE " . $_POST['oldvalue'] . " " . $_POST['0_field'] . " " . $_POST['0_type'];
-                    $result = $db->query($query);
-                    if (!$result) $error = true;
-                    $completed = "Table '" . $_GET['table'] . "' has been altered successfully.";
-                    break;
+
+case "column_edit":
+$query = "ALTER TABLE " . $_GET['table'] . " CHANGE " . $_POST['oldvalue'] . " " . $_POST['0_field'] . " " . $_POST['0_type'];
+$result = $db->query($query);
+if (!$result) $error = true;
+$completed = "Table '" . $_GET['table'] . "' has been altered successfully.";
+break;
                     /////////////////////////////////////////////// delete trigger
-                    
-                case "trigger_delete":
-                    $query = "DROP TRIGGER " . $_GET['pk'];
-                    $result = $db->query($query);
-                    if (!$result) $error = true;
-                    $completed = "Trigger '" . $_GET['pk'] . "' deleted.<br/><span style='font-size:11px;'>" . $query . "</span>";
-                    break;
+
+case "trigger_delete":
+$query = "DROP TRIGGER " . $_GET['pk'];
+$result = $db->query($query);
+if (!$result) $error = true;
+$completed = "Trigger '" . $_GET['pk'] . "' deleted.<br/><span style='font-size:11px;'>" . $query . "</span>";
+break;
                     /////////////////////////////////////////////// delete index
-                    
-                case "index_delete":
-                    $query = "DROP INDEX " . $_GET['pk'];
-                    $result = $db->query($query);
-                    if (!$result) $error = true;
-                    $completed = "Index '" . $_GET['pk'] . "' deleted.<br/><span style='font-size:11px;'>" . $query . "</span>";
-                    break;
+
+case "index_delete":
+$query = "DROP INDEX " . $_GET['pk'];
+$result = $db->query($query);
+if (!$result) $error = true;
+$completed = "Index '" . $_GET['pk'] . "' deleted.<br/><span style='font-size:11px;'>" . $query . "</span>";
+break;
                     /////////////////////////////////////////////// create trigger
-                    
-                case "trigger_create":
-                    $str = "CREATE TRIGGER " . $_POST['trigger_name'];
-                    if ($_POST['beforeafter'] != "") $str.= " " . $_POST['beforeafter'];
-                    $str.= " " . $_POST['event'] . " ON " . $_GET['table'];
-                    if (isset($_POST['foreachrow'])) $str.= " FOR EACH ROW";
-                    if ($_POST['whenexpression'] != "") $str.= " WHEN " . stripslashes($_POST['whenexpression']);
-                    $str.= " BEGIN";
-                    $str.= " " . stripslashes($_POST['triggersteps']);
-                    $str.= " END";
-                    $query = $str;
-                    $result = $db->query($query);
-                    if (!$result) $error = true;
-                    $completed = "Trigger created.<br/><span style='font-size:11px;'>" . $query . "</span>";
-                    break;
+
+case "trigger_create":
+$str = "CREATE TRIGGER " . $_POST['trigger_name'];
+if ($_POST['beforeafter'] != "") $str.= " " . $_POST['beforeafter'];
+$str.= " " . $_POST['event'] . " ON " . $_GET['table'];
+if (isset($_POST['foreachrow'])) $str.= " FOR EACH ROW";
+if ($_POST['whenexpression'] != "") $str.= " WHEN " . stripslashes($_POST['whenexpression']);
+$str.= " BEGIN";
+$str.= " " . stripslashes($_POST['triggersteps']);
+$str.= " END";
+$query = $str;
+$result = $db->query($query);
+if (!$result) $error = true;
+$completed = "Trigger created.<br/><span style='font-size:11px;'>" . $query . "</span>";
+break;
                     /////////////////////////////////////////////// create index
-                    
-                case "index_create":
-                    $num = $_POST['num'];
-                    if ($_POST['name'] == "") {
-                        $completed = "Index name must not be blank.";
-                    } else if ($_POST['0_field'] == "") {
-                        $completed = "You must specify at least one index column.";
-                    } else {
-                        $str = "CREATE ";
-                        if ($_POST['duplicate'] == "no") $str.= "UNIQUE ";
-                        $str.= "INDEX " . $_POST['name'] . " ON " . $_GET['table'] . " (";
-                        $str.= $_POST['0_field'] . $_POST['0_order'];
-                        for ($i = 1;$i < $num;$i++) {
-                            if ($_POST[$i . '_field'] != "") $str.= ", " . $_POST[$i . '_field'] . $_POST[$i . '_order'];
-                        }
-                        $str.= ")";
-                        $query = $str;
-                        $result = $db->query($query);
-                        if (!$result) $error = true;
-                        $completed = "Index created.<br/><span style='font-size:11px;'>" . $query . "</span>";
-                    }
-                    break;
-                }
-            }
-            echo "<div id='container'>";
-            echo "<div id='leftNav'>";
-            echo "<h1>";
-            echo "<a href='" . PAGE . "'>";
-            echo "<span id='logo'>" . PROJECT . "</span> <span id='version'>v" . VERSION . "</span>";
-            echo "</a>";
-            echo "</h1>";
-            echo "<div id='headerlinks'>";
-            echo "<a href='javascript:openHelp(\"top\");'>Documentation</a> | ";
-            echo "<a href='http://www.gnu.org/licenses/gpl.html' target='_blank'>License</a> | ";
-            echo "<a href='http://code.google.com/p/phpliteadmin/' target='_blank'>Project Site</a>";
-            echo "</div>";
-            echo "<fieldset style='margin:15px;'><legend><b>Change Database</b></legend>";
+
+case "index_create":
+$num = $_POST['num'];
+if ($_POST['name'] == "") {
+    $completed = "Index name must not be blank.";
+} else if ($_POST['0_field'] == "") {
+    $completed = "You must specify at least one index column.";
+} else {
+    $str = "CREATE ";
+    if ($_POST['duplicate'] == "no") $str.= "UNIQUE ";
+    $str.= "INDEX " . $_POST['name'] . " ON " . $_GET['table'] . " (";
+        $str.= $_POST['0_field'] . $_POST['0_order'];
+        for ($i = 1;$i < $num;$i++) {
+            if ($_POST[$i . '_field'] != "") $str.= ", " . $_POST[$i . '_field'] . $_POST[$i . '_order'];
+        }
+        $str.= ")";
+$query = $str;
+$result = $db->query($query);
+if (!$result) $error = true;
+$completed = "Index created.<br/><span style='font-size:11px;'>" . $query . "</span>";
+}
+break;
+}
+}
+echo "<div id='container'>";
+echo "<div id='leftNav'>";
+echo "<h1>";
+echo "<a href='" . PAGE . "'>";
+echo "<span id='logo'>" . PROJECT . "</span> <span id='version'>v" . VERSION . "</span>";
+echo "</a>";
+echo "</h1>";
+echo "<div id='headerlinks'>";
+echo "<a href='javascript:openHelp(\"top\");'>Documentation</a> | ";
+echo "<a href='http://www.gnu.org/licenses/gpl.html' target='_blank'>License</a> | ";
+echo "<a href='http://code.google.com/p/phpliteadmin/' target='_blank'>Project Site</a>";
+echo "</div>";
+echo "<fieldset style='margin:15px;'><legend><b>Change Database</b></legend>";
             if (sizeof($databases) < 10) //if there aren't a lot of databases, just show them as a list of links instead of drop down menu
             {
                 for ($i = 0;$i < sizeof($databases);$i++) {
@@ -1815,7 +1785,7 @@ function PopupCenter(pageURL, title)
                 echo "Error: " . $db->getError() . ".<br/>This may be a bug that needs to be reported at <a href='http://code.google.com/p/phpliteadmin/issues/list' target='_blank'>code.google.com/p/phpliteadmin/issues/list</a>";
                 else
                 //action was performed successfully - show success message
-                echo $completed;
+                    echo $completed;
                 echo "</div>";
                 if ($_GET['action'] == "row_delete" || $_GET['action'] == "row_create" || $_GET['action'] == "row_edit") echo "<br/><br/><a href='" . PAGE . "?table=" . $_GET['table'] . "&action=row_view'>Return</a>";
                 else if ($_GET['action'] == "column_create" || $_GET['action'] == "column_delete" || $_GET['action'] == "column_edit" || $_GET['action'] == "index_create" || $_GET['action'] == "index_delete" || $_GET['action'] == "trigger_delete" || $_GET['action'] == "trigger_create") echo "<br/><br/><a href='" . PAGE . "?table=" . $_GET['table'] . "&action=column_view'>Return</a>";
@@ -1897,70 +1867,70 @@ function PopupCenter(pageURL, title)
                 switch ($_GET['action']) {
                         //table actions
                         /////////////////////////////////////////////// create table
-                        
+                    
                     case "table_create":
-                        $query = "SELECT name FROM sqlite_master WHERE type='table' AND name='" . $_POST['tablename'] . "'";
-                        $results = $db->selectArray($query);
-                        if (sizeof($results) > 0) $exists = true;
-                        else $exists = false;
-                        echo "<h2>Creating new table: '" . $_POST['tablename'] . "'</h2>";
-                        if ($_POST['tablefields'] == "" || intval($_POST['tablefields']) <= 0) echo "You must specify the number of table fields.";
-                        else if ($_POST['tablename'] == "") echo "You must specify a table name.";
-                        else if ($exists) echo "Table of the same name already exists.";
-                        else {
-                            $num = intval($_POST['tablefields']);
-                            $name = $_POST['tablename'];
-                            echo "<form action='" . PAGE . "?action=table_create&confirm=1' method='post'>";
-                            echo "<input type='hidden' name='tablename' value='" . $name . "'/>";
-                            echo "<input type='hidden' name='rows' value='" . $num . "'/>";
-                            echo "<table border='0' cellpadding='2' cellspacing='1' class='viewTable'>";
-                            echo "<tr>";
-                            $headings = array("Field", "Type", "Primary Key", "Autoincrement", "Not NULL", "Default Value");
-                            for ($k = 0;$k < count($headings);$k++) echo "<td class='tdheader'>" . $headings[$k] . "</td>";
+                    $query = "SELECT name FROM sqlite_master WHERE type='table' AND name='" . $_POST['tablename'] . "'";
+                    $results = $db->selectArray($query);
+                    if (sizeof($results) > 0) $exists = true;
+                    else $exists = false;
+                    echo "<h2>Creating new table: '" . $_POST['tablename'] . "'</h2>";
+                    if ($_POST['tablefields'] == "" || intval($_POST['tablefields']) <= 0) echo "You must specify the number of table fields.";
+                    else if ($_POST['tablename'] == "") echo "You must specify a table name.";
+                    else if ($exists) echo "Table of the same name already exists.";
+                    else {
+                        $num = intval($_POST['tablefields']);
+                        $name = $_POST['tablename'];
+                        echo "<form action='" . PAGE . "?action=table_create&confirm=1' method='post'>";
+                        echo "<input type='hidden' name='tablename' value='" . $name . "'/>";
+                        echo "<input type='hidden' name='rows' value='" . $num . "'/>";
+                        echo "<table border='0' cellpadding='2' cellspacing='1' class='viewTable'>";
+                        echo "<tr>";
+                        $headings = array("Field", "Type", "Primary Key", "Autoincrement", "Not NULL", "Default Value");
+                        for ($k = 0;$k < count($headings);$k++) echo "<td class='tdheader'>" . $headings[$k] . "</td>";
                             echo "</tr>";
-                            for ($i = 0;$i < $num;$i++) {
-                                $tdWithClass = "<td class='td" . ($i % 2 ? "1" : "2") . "'>";
-                                echo "<tr>";
-                                echo $tdWithClass;
-                                echo "<input type='text' name='" . $i . "_field' style='width:200px;'/>";
-                                echo "</td>";
-                                echo $tdWithClass;
-                                echo "<select name='" . $i . "_type' id='" . $i . "_type' onchange='toggleAutoincrement(" . $i . ");'>";
-                                $types = unserialize(DATATYPES);
-                                for ($z = 0;$z < sizeof($types);$z++) echo "<option value='" . $types[$z] . "'>" . $types[$z] . "</option>";
-                                echo "</select>";
-                                echo "</td>";
-                                echo $tdWithClass;
-                                echo "<input type='checkbox' name='" . $i . "_primarykey' id='" . $i . "_primarykey' onclick='toggleNull(" . $i . ");'/> Yes";
-                                echo "</td>";
-                                echo $tdWithClass;
-                                echo "<input type='checkbox' name='" . $i . "_autoincrement' id='" . $i . "_autoincrement'/> Yes";
-                                echo "</td>";
-                                echo $tdWithClass;
-                                echo "<input type='checkbox' name='" . $i . "_notnull' id='" . $i . "_notnull'/> Yes";
-                                echo "</td>";
-                                echo $tdWithClass;
-                                echo "<input type='text' name='" . $i . "_defaultvalue' style='width:100px;'/>";
-                                echo "</td>";
-                                echo "</tr>";
-                            }
+                        for ($i = 0;$i < $num;$i++) {
+                            $tdWithClass = "<td class='td" . ($i % 2 ? "1" : "2") . "'>";
                             echo "<tr>";
-                            echo "<td class='tdheader' style='text-align:right;' colspan='6'>";
-                            echo "<input type='submit' value='Create' class='btn'/> ";
-                            echo "<a href='" . PAGE . "'>Cancel</a>";
+                            echo $tdWithClass;
+                            echo "<input type='text' name='" . $i . "_field' style='width:200px;'/>";
+                            echo "</td>";
+                            echo $tdWithClass;
+                            echo "<select name='" . $i . "_type' id='" . $i . "_type' onchange='toggleAutoincrement(" . $i . ");'>";
+                            $types = unserialize(DATATYPES);
+                            for ($z = 0;$z < sizeof($types);$z++) echo "<option value='" . $types[$z] . "'>" . $types[$z] . "</option>";
+                                echo "</select>";
+                            echo "</td>";
+                            echo $tdWithClass;
+                            echo "<input type='checkbox' name='" . $i . "_primarykey' id='" . $i . "_primarykey' onclick='toggleNull(" . $i . ");'/> Yes";
+                            echo "</td>";
+                            echo $tdWithClass;
+                            echo "<input type='checkbox' name='" . $i . "_autoincrement' id='" . $i . "_autoincrement'/> Yes";
+                            echo "</td>";
+                            echo $tdWithClass;
+                            echo "<input type='checkbox' name='" . $i . "_notnull' id='" . $i . "_notnull'/> Yes";
+                            echo "</td>";
+                            echo $tdWithClass;
+                            echo "<input type='text' name='" . $i . "_defaultvalue' style='width:100px;'/>";
                             echo "</td>";
                             echo "</tr>";
-                            echo "</table>";
-                            echo "</form>";
                         }
-                        break;
+                        echo "<tr>";
+                        echo "<td class='tdheader' style='text-align:right;' colspan='6'>";
+                        echo "<input type='submit' value='Create' class='btn'/> ";
+                        echo "<a href='" . PAGE . "'>Cancel</a>";
+                        echo "</td>";
+                        echo "</tr>";
+                        echo "</table>";
+                        echo "</form>";
+                    }
+                    break;
                         /////////////////////////////////////////////// perform SQL query on table
-                        
+                    
                     case "table_sql":
-                        $isSelect = false;
-                        if (isset($_POST['query']) && $_POST['query'] != "") {
-                            $delimiter = $_POST['delimiter'];
-                            $queryStr = stripslashes($_POST['queryval']);
+                    $isSelect = false;
+                    if (isset($_POST['query']) && $_POST['query'] != "") {
+                        $delimiter = $_POST['delimiter'];
+                        $queryStr = stripslashes($_POST['queryval']);
                             $query = explode_sql($delimiter, $queryStr); //explode the query string into individual queries based on the delimiter
                             for ($i = 0;$i < sizeof($query);$i++) //iterate through the queries exploded by the delimiter
                             {
@@ -2048,7 +2018,7 @@ function PopupCenter(pageURL, title)
                         break;
                         /////////////////////////////////////////////// empty table
                         
-                    case "table_empty":
+                        case "table_empty":
                         echo "<form action='" . PAGE . "?action=table_empty&confirm=1' method='post'>";
                         echo "<input type='hidden' name='tablename' value='" . $_GET['table'] . "'/>";
                         echo "<div class='confirm'>";
@@ -2059,7 +2029,7 @@ function PopupCenter(pageURL, title)
                         break;
                         /////////////////////////////////////////////// drop table
                         
-                    case "table_drop":
+                        case "table_drop":
                         echo "<form action='" . PAGE . "?action=table_drop&confirm=1' method='post'>";
                         echo "<input type='hidden' name='tablename' value='" . $_GET['table'] . "'/>";
                         echo "<div class='confirm'>";
@@ -2070,7 +2040,7 @@ function PopupCenter(pageURL, title)
                         break;
                         /////////////////////////////////////////////// drop view
                         
-                    case "view_drop":
+                        case "view_drop":
                         echo "<form action='" . PAGE . "?action=view_drop&confirm=1' method='post'>";
                         echo "<input type='hidden' name='viewname' value='" . $_GET['table'] . "'/>";
                         echo "<div class='confirm'>";
@@ -2081,7 +2051,7 @@ function PopupCenter(pageURL, title)
                         break;
                         /////////////////////////////////////////////// export table
                         
-                    case "table_export":
+                        case "table_export":
                         echo "<form method='post' action='" . PAGE . "'>";
                         echo "<fieldset style='float:left; width:260px; margin-right:20px;'><legend><b>Export</b></legend>";
                         echo "<input type='hidden' value='" . $_GET['table'] . "' name='single_table'/>";
@@ -2126,7 +2096,7 @@ function PopupCenter(pageURL, title)
                         break;
                         /////////////////////////////////////////////// import table
                         
-                    case "table_import":
+                        case "table_import":
                         if (isset($_POST['import'])) {
                             echo "<div class='confirm'>";
                             if ($importSuccess === true) echo "Import was successful.";
@@ -2155,7 +2125,7 @@ function PopupCenter(pageURL, title)
                         break;
                         /////////////////////////////////////////////// rename table
                         
-                    case "table_rename":
+                        case "table_rename":
                         echo "<form action='" . PAGE . "?action=table_rename&confirm=1' method='post'>";
                         echo "<input type='hidden' name='oldname' value='" . $_GET['table'] . "'/>";
                         echo "Rename table '" . $_GET['table'] . "' to <input type='text' name='newname' style='width:200px;'/> <input type='submit' value='Rename' name='rename' class='btn'/>";
@@ -2163,7 +2133,7 @@ function PopupCenter(pageURL, title)
                         break;
                         /////////////////////////////////////////////// search table
                         
-                    case "table_search":
+                        case "table_search":
                         if (isset($_GET['done'])) {
                             $query = "PRAGMA table_info('" . $_GET['table'] . "')";
                             $result = $db->selectArray($query);
@@ -2287,7 +2257,7 @@ function PopupCenter(pageURL, title)
                         //row actions
                         /////////////////////////////////////////////// view row
                         
-                    case "row_view":
+                        case "row_view":
                         if (!isset($_POST['startRow'])) $_POST['startRow'] = 0;
                         if (isset($_POST['numRows'])) $_SESSION[COOKIENAME . 'numRows'] = $_POST['numRows'];
                         if (!isset($_SESSION[COOKIENAME . 'numRows'])) $_SESSION[COOKIENAME . 'numRows'] = 30;
@@ -2476,88 +2446,88 @@ function PopupCenter(pageURL, title)
                                 }
                                 //begin chart view
                                 
+                                ?>
+                                <script type='text/javascript' src='https://www.google.com/jsapi'></script>
+                                <script type='text/javascript'>
+                                  google.load('visualization', '1.0', {'packages':['corechart']});
+                                  google.setOnLoadCallback(drawChart);
+                                  function drawChart()
+                                  {
+                                     var data = new google.visualization.DataTable();
+                                     data.addColumn('string', '<?php echo $result[$_SESSION[COOKIENAME . $_GET['table'] . 'chartlabels']][1]; ?>');
+                                     data.addColumn('number', '<?php echo $result[$_SESSION[COOKIENAME . $_GET['table'] . 'chartvalues']][1]; ?>');
+                                     data.addRows([
+                                         <?php
+                                         for ($i = 0;$i < sizeof($arr);$i++) {
+                                            $label = str_replace("'", "", $db->formatString($arr[$i][$_SESSION[COOKIENAME . $_GET['table'] . 'chartlabels']]));
+                                            $value = $db->formatString($arr[$i][$_SESSION[COOKIENAME . $_GET['table'] . 'chartvalues']]);
+                                            if ($value == NULL || $value == "") $value = 0;
+                                            echo "['" . $label . "', " . $value . "]";
+                                            if ($i < sizeof($arr) - 1) echo ",";
+                                        }
+                                        $height = (sizeof($arr) + 1) * 30;
+                                        if ($height > 1000) $height = 1000;
+                                        else if ($height < 300) $height = 300;
+                                        if ($_SESSION[COOKIENAME . 'charttype'] == "pie") $height = 800;
+                                        ?>
+                                        ]);
+var chartWidth = document.getElementById("content").offsetWidth - document.getElementById("chartsettingsbox").offsetWidth - 100;
+if(chartWidth>1000)
+    chartWidth = 1000;
+
+var options = 
+{
+    'width':chartWidth,
+    'height':<?php echo $height; ?>,
+    'title':'<?php echo $result[$_SESSION[COOKIENAME . $_GET['table'] . 'chartlabels']][1] . " vs " . $result[$_SESSION[COOKIENAME . $_GET['table'] . 'chartvalues']][1]; ?>'
+};
+<?php
+if ($_SESSION[COOKIENAME . 'charttype'] == "bar") echo "var chart = new google.visualization.BarChart(document.getElementById('chart_div'));";
+else if ($_SESSION[COOKIENAME . 'charttype'] == "pie") echo "var chart = new google.visualization.PieChart(document.getElementById('chart_div'));";
+else echo "var chart = new google.visualization.LineChart(document.getElementById('chart_div'));";
 ?>
-						<script type='text/javascript' src='https://www.google.com/jsapi'></script>
-						<script type='text/javascript'>
-						google.load('visualization', '1.0', {'packages':['corechart']});
-						google.setOnLoadCallback(drawChart);
-						function drawChart()
-						{
-							var data = new google.visualization.DataTable();
-							data.addColumn('string', '<?php echo $result[$_SESSION[COOKIENAME . $_GET['table'] . 'chartlabels']][1]; ?>');
-							data.addColumn('number', '<?php echo $result[$_SESSION[COOKIENAME . $_GET['table'] . 'chartvalues']][1]; ?>');
-							data.addRows([
-							<?php
-                                for ($i = 0;$i < sizeof($arr);$i++) {
-                                    $label = str_replace("'", "", $db->formatString($arr[$i][$_SESSION[COOKIENAME . $_GET['table'] . 'chartlabels']]));
-                                    $value = $db->formatString($arr[$i][$_SESSION[COOKIENAME . $_GET['table'] . 'chartvalues']]);
-                                    if ($value == NULL || $value == "") $value = 0;
-                                    echo "['" . $label . "', " . $value . "]";
-                                    if ($i < sizeof($arr) - 1) echo ",";
-                                }
-                                $height = (sizeof($arr) + 1) * 30;
-                                if ($height > 1000) $height = 1000;
-                                else if ($height < 300) $height = 300;
-                                if ($_SESSION[COOKIENAME . 'charttype'] == "pie") $height = 800;
-?>
-							]);
-							var chartWidth = document.getElementById("content").offsetWidth - document.getElementById("chartsettingsbox").offsetWidth - 100;
-							if(chartWidth>1000)
-								chartWidth = 1000;
-								
-							var options = 
-							{
-								'width':chartWidth,
-								'height':<?php echo $height; ?>,
-								'title':'<?php echo $result[$_SESSION[COOKIENAME . $_GET['table'] . 'chartlabels']][1] . " vs " . $result[$_SESSION[COOKIENAME . $_GET['table'] . 'chartvalues']][1]; ?>'
-							};
-							<?php
-                                if ($_SESSION[COOKIENAME . 'charttype'] == "bar") echo "var chart = new google.visualization.BarChart(document.getElementById('chart_div'));";
-                                else if ($_SESSION[COOKIENAME . 'charttype'] == "pie") echo "var chart = new google.visualization.PieChart(document.getElementById('chart_div'));";
-                                else echo "var chart = new google.visualization.LineChart(document.getElementById('chart_div'));";
-?>
-							chart.draw(data, options);
-						}
-						</script>
-						<div id="chart_div" style="float:left;">If you can read this, it means the chart could not be generated. The data you are trying to view may not be appropriate for a chart.</div>
-						<?php
-                                echo "<fieldset style='float:right; text-align:center;' id='chartsettingsbox'><legend><b>Chart Settings</b></legend>";
-                                echo "<form action='" . PAGE . "?action=row_view&table=" . $_GET['table'] . "' method='post'>";
-                                echo "Chart Type: <select name='charttype'>";
-                                echo "<option value='bar'";
-                                if ($_SESSION[COOKIENAME . 'charttype'] == "bar") echo " selected='selected'";
-                                echo ">Bar Chart</option>";
-                                echo "<option value='pie'";
-                                if ($_SESSION[COOKIENAME . 'charttype'] == "pie") echo " selected='selected'";
-                                echo ">Pie Chart</option>";
-                                echo "<option value='line'";
-                                if ($_SESSION[COOKIENAME . 'charttype'] == "line") echo " selected='selected'";
-                                echo ">Line Chart</option>";
-                                echo "</select>";
-                                echo "<br/><br/>";
-                                echo "Labels: <select name='chartlabels'>";
-                                for ($i = 0;$i < sizeof($result);$i++) {
-                                    if (isset($_SESSION[COOKIENAME . $_GET['table'] . 'chartlabels']) && $_SESSION[COOKIENAME . $_GET['table'] . 'chartlabels'] == $i) echo "<option value='" . $i . "' selected='selected'>" . $result[$i][1] . "</option>";
-                                    else echo "<option value='" . $i . "'>" . $result[$i][1] . "</option>";
-                                }
-                                echo "</select>";
-                                echo "<br/><br/>";
-                                echo "Values: <select name='chartvalues'>";
-                                for ($i = 0;$i < sizeof($result);$i++) {
-                                    if (strtolower($result[$i][2]) == "integer" || strtolower($result[$i][2]) == "float" || strtolower($result[$i][2]) == "real") {
-                                        if (isset($_SESSION[COOKIENAME . $_GET['table'] . 'chartvalues']) && $_SESSION[COOKIENAME . $_GET['table'] . 'chartvalues'] == $i) echo "<option value='" . $i . "' selected='selected'>" . $result[$i][1] . "</option>";
-                                        else echo "<option value='" . $i . "'>" . $result[$i][1] . "</option>";
-                                    }
-                                }
-                                echo "</select>";
-                                echo "<br/><br/>";
-                                echo "<input type='submit' name='chartsettings' value='Update' class='btn'/>";
-                                echo "</form>";
-                                echo "</fieldset>";
-                                echo "<div style='clear:both;'></div>";
+chart.draw(data, options);
+}
+</script>
+<div id="chart_div" style="float:left;">If you can read this, it means the chart could not be generated. The data you are trying to view may not be appropriate for a chart.</div>
+<?php
+echo "<fieldset style='float:right; text-align:center;' id='chartsettingsbox'><legend><b>Chart Settings</b></legend>";
+echo "<form action='" . PAGE . "?action=row_view&table=" . $_GET['table'] . "' method='post'>";
+echo "Chart Type: <select name='charttype'>";
+echo "<option value='bar'";
+if ($_SESSION[COOKIENAME . 'charttype'] == "bar") echo " selected='selected'";
+echo ">Bar Chart</option>";
+echo "<option value='pie'";
+if ($_SESSION[COOKIENAME . 'charttype'] == "pie") echo " selected='selected'";
+echo ">Pie Chart</option>";
+echo "<option value='line'";
+if ($_SESSION[COOKIENAME . 'charttype'] == "line") echo " selected='selected'";
+echo ">Line Chart</option>";
+echo "</select>";
+echo "<br/><br/>";
+echo "Labels: <select name='chartlabels'>";
+for ($i = 0;$i < sizeof($result);$i++) {
+    if (isset($_SESSION[COOKIENAME . $_GET['table'] . 'chartlabels']) && $_SESSION[COOKIENAME . $_GET['table'] . 'chartlabels'] == $i) echo "<option value='" . $i . "' selected='selected'>" . $result[$i][1] . "</option>";
+    else echo "<option value='" . $i . "'>" . $result[$i][1] . "</option>";
+}
+echo "</select>";
+echo "<br/><br/>";
+echo "Values: <select name='chartvalues'>";
+for ($i = 0;$i < sizeof($result);$i++) {
+    if (strtolower($result[$i][2]) == "integer" || strtolower($result[$i][2]) == "float" || strtolower($result[$i][2]) == "real") {
+        if (isset($_SESSION[COOKIENAME . $_GET['table'] . 'chartvalues']) && $_SESSION[COOKIENAME . $_GET['table'] . 'chartvalues'] == $i) echo "<option value='" . $i . "' selected='selected'>" . $result[$i][1] . "</option>";
+        else echo "<option value='" . $i . "'>" . $result[$i][1] . "</option>";
+    }
+}
+echo "</select>";
+echo "<br/><br/>";
+echo "<input type='submit' name='chartsettings' value='Update' class='btn'/>";
+echo "</form>";
+echo "</fieldset>";
+echo "<div style='clear:both;'></div>";
                                 //end chart view
-                                
-                            }
+
+}
                         } else if ($rowCount > 0) //no rows - do nothing
                         {
                             echo "<br/><br/>There are no rows in the table for the range you selected.";
@@ -2567,7 +2537,7 @@ function PopupCenter(pageURL, title)
                         break;
                         /////////////////////////////////////////////// create row
                         
-                    case "row_create":
+                        case "row_create":
                         $fieldStr = "";
                         echo "<form action='" . PAGE . "?table=" . $_GET['table'] . "&action=row_create' method='post'>";
                         echo "Restart insertion with ";
@@ -2651,7 +2621,7 @@ function PopupCenter(pageURL, title)
                         break;
                         /////////////////////////////////////////////// edit or delete row
                         
-                    case "row_editordelete":
+                        case "row_editordelete":
                         if (isset($_POST['check'])) $pks = $_POST['check'];
                         else if (isset($_GET['pk'])) $pks = array($_GET['pk']);
                         $str = $pks[0];
@@ -2675,7 +2645,7 @@ function PopupCenter(pageURL, title)
                                 //build the POST array of fields
                                 $fieldStr = $result[0][1];
                                 for ($j = 1;$j < sizeof($result);$j++) $fieldStr.= ":" . $result[$j][1];
-                                echo "<input type='hidden' name='fieldArray' value='" . $fieldStr . "'/>";
+                                    echo "<input type='hidden' name='fieldArray' value='" . $fieldStr . "'/>";
                                 for ($j = 0;$j < sizeof($pks);$j++) {
                                     $query = "SELECT * FROM " . $_GET['table'] . " WHERE ROWID = " . $pks[$j];
                                     $result1 = $db->select($query);
@@ -2747,7 +2717,7 @@ function PopupCenter(pageURL, title)
                         //column actions
                         /////////////////////////////////////////////// view column
                         
-                    case "column_view":
+                        case "column_view":
                         $query = "PRAGMA table_info('" . $_GET['table'] . "')";
                         $result = $db->selectArray($query);
                         echo "<form action='" . PAGE . "?table=" . $_GET['table'] . "&action=column_delete' method='post' name='checkForm'>";
@@ -2931,7 +2901,7 @@ function PopupCenter(pageURL, title)
                         break;
                         /////////////////////////////////////////////// create column
                         
-                    case "column_create":
+                        case "column_create":
                         echo "<h2>Adding new field(s) to table '" . $_POST['tablename'] . "'</h2>";
                         if ($_POST['tablefields'] == "" || intval($_POST['tablefields']) <= 0) echo "You must specify the number of table fields.";
                         else if ($_POST['tablename'] == "") echo "You must specify a table name.";
@@ -2945,7 +2915,7 @@ function PopupCenter(pageURL, title)
                             echo "<tr>";
                             $headings = array("Field", "Type", "Primary Key", "Autoincrement", "Not NULL", "Default Value");
                             for ($k = 0;$k < count($headings);$k++) echo "<td class='tdheader'>" . $headings[$k] . "</td>";
-                            echo "</tr>";
+                                echo "</tr>";
                             for ($i = 0;$i < $num;$i++) {
                                 $tdWithClass = "<td class='td" . ($i % 2 ? "1" : "2") . "'>";
                                 echo "<tr>";
@@ -2956,7 +2926,7 @@ function PopupCenter(pageURL, title)
                                 echo "<select name='" . $i . "_type' id='" . $i . "_type' onchange='toggleAutoincrement(" . $i . ");'>";
                                 $types = unserialize(DATATYPES);
                                 for ($z = 0;$z < sizeof($types);$z++) echo "<option value='" . $types[$z] . "'>" . $types[$z] . "</option>";
-                                echo "</select>";
+                                    echo "</select>";
                                 echo "</td>";
                                 echo $tdWithClass;
                                 echo "<input type='checkbox' name='" . $i . "_primarykey'/> Yes";
@@ -2984,7 +2954,7 @@ function PopupCenter(pageURL, title)
                         break;
                         /////////////////////////////////////////////// delete column
                         
-                    case "column_delete":
+                        case "column_delete":
                         if (isset($_POST['check'])) $pks = $_POST['check'];
                         else if (isset($_GET['pk'])) $pks = array($_GET['pk']);
                         $str = $pks[0];
@@ -3010,7 +2980,7 @@ function PopupCenter(pageURL, title)
                         break;
                         /////////////////////////////////////////////// edit column
                         
-                    case "column_edit":
+                        case "column_edit":
                         echo "<h2>Editing column '" . $_GET['pk'] . "' on table '" . $_GET['table'] . "'</h2>";
                         echo "Due to the limitations of SQLite, only the field name and data type can be modified.<br/><br/>";
                         if (!isset($_GET['pk'])) echo "You must specify a column.";
@@ -3038,7 +3008,7 @@ function PopupCenter(pageURL, title)
                             //$headings = array("Field", "Type", "Primary Key", "Autoincrement", "Not NULL", "Default Value");
                             $headings = array("Field", "Type");
                             for ($k = 0;$k < count($headings);$k++) echo "<td class='tdheader'>" . $headings[$k] . "</td>";
-                            echo "</tr>";
+                                echo "</tr>";
                             $i = 0;
                             $tdWithClass = "<td class='td" . ($i % 2 ? "1" : "2") . "'>";
                             echo "<tr>";
@@ -3090,7 +3060,7 @@ function PopupCenter(pageURL, title)
                         break;
                         /////////////////////////////////////////////// delete index
                         
-                    case "index_delete":
+                        case "index_delete":
                         echo "<form action='" . PAGE . "?table=" . $_GET['table'] . "&action=index_delete&pk=" . $_GET['pk'] . "&confirm=1' method='post'>";
                         echo "<div class='confirm'>";
                         echo "Are you sure you want to delete index '" . $_GET['pk'] . "'?<br/><br/>";
@@ -3101,7 +3071,7 @@ function PopupCenter(pageURL, title)
                         break;
                         /////////////////////////////////////////////// delete trigger
                         
-                    case "trigger_delete":
+                        case "trigger_delete":
                         echo "<form action='" . PAGE . "?table=" . $_GET['table'] . "&action=trigger_delete&pk=" . $_GET['pk'] . "&confirm=1' method='post'>";
                         echo "<div class='confirm'>";
                         echo "Are you sure you want to delete trigger '" . $_GET['pk'] . "'?<br/><br/>";
@@ -3112,7 +3082,7 @@ function PopupCenter(pageURL, title)
                         break;
                         /////////////////////////////////////////////// create trigger
                         
-                    case "trigger_create":
+                        case "trigger_create":
                         echo "<h2>Creating new trigger on table '" . $_POST['tablename'] . "'</h2>";
                         if ($_POST['tablename'] == "") echo "You must specify a table name.";
                         else {
@@ -3149,7 +3119,7 @@ function PopupCenter(pageURL, title)
                         break;
                         /////////////////////////////////////////////// create index
                         
-                    case "index_create":
+                        case "index_create":
                         echo "<h2>Creating new index on table '" . $_POST['tablename'] . "'</h2>";
                         if ($_POST['numcolumns'] == "" || intval($_POST['numcolumns']) <= 0) echo "You must specify the number of table fields.";
                         else if ($_POST['tablename'] == "") echo "You must specify a table name.";
@@ -3172,7 +3142,7 @@ function PopupCenter(pageURL, title)
                                 echo "<select name='" . $i . "_field'>";
                                 echo "<option value=''>--Ignore--</option>";
                                 for ($j = 0;$j < sizeof($result);$j++) echo "<option value='" . $result[$j][1] . "'>" . $result[$j][1] . "</option>";
-                                echo "</select> ";
+                                    echo "</select> ";
                                 echo "<select name='" . $i . "_order'>";
                                 echo "<option value=''></option>";
                                 echo "<option value=' ASC'>Ascending</option>";
@@ -3251,7 +3221,7 @@ function PopupCenter(pageURL, title)
                         $result = $db->selectArray($query);
                         $j = 0;
                         for ($i = 0;$i < sizeof($result);$i++) if (substr($result[$i]['name'], 0, 7) != "sqldite_" && $result[$i]['name'] != "") $j++;
-                        if ($j == 0) echo "No tables in database.<br/><br/>";
+                            if ($j == 0) echo "No tables in database.<br/><br/>";
                         else {
                             echo "<table border='0' cellpadding='2' cellspacing='1' class='viewTable'>";
                             echo "<tr>";
@@ -3603,4 +3573,4 @@ function PopupCenter(pageURL, title)
             }
             echo "</body>";
             echo "</html>";
-?>
+            ?>
