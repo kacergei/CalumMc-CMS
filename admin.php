@@ -21,13 +21,25 @@ if (isset($_POST['user']) && isset($_POST['pass'])) {
 if (isset($_SESSION['user'])) {
   if ($_GET['q'] == 'template' && isset($_POST['template'])) {
     $template = 'data/default.xtpl';
-    $fh = fopen($template, 'w') or die("Error writing to template, you need chmod 777.");
+    $fh = fopen($template, 'w') or die("Error writing to template, you need to chmod 777.");
     $stringData = stripslashes($_POST['template']);
     fwrite($fh, $stringData);
     fclose($fh);
     $message = 'Template file has been updated';
     $alerttype = 'alert-success';
   }
+
+  // Edit CSS
+  if ($_GET['q'] == 'style' && isset($_POST['style'])) {
+    $style = 'assets/style.css';
+    $fh = fopen($style, 'w') or die("Error writing to style, you need to chmod 777.");
+    $stringData = stripslashes($_POST['style']);
+    fwrite($fh, $stringData);
+    fclose($fh);
+    $message = 'Style file has been updated';
+    $alerttype = 'alert-success';
+  }
+
     // Signing out
   if ($_GET['q'] == 'signout') {
     session_destroy();
@@ -103,21 +115,15 @@ if ($_GET['q'] == 'template') {
   <input type="submit" class="btn btn-primary" value="Save" />
 </form>';
 }
-if ($_GET['q'] == 'style') {
-  include_once ('includes/xtemplate.class.php');
 
-  $xtpl = new XTemplate('data/css_settings.xtpl');
-  
-      // Get block data and assign it.
-  $dbh = new PDO("sqlite:data/datastore.sqlite");
-  $IDq = $dbh->query("SELECT * FROM css");
-  $rowarray = $IDq->fetchall(PDO::FETCH_ASSOC);
-  foreach ($rowarray as $css) {
-    $xtpl->assign($css['id'], '<div class="control-group"><label class="control-label" for="'.$css["id"].'">'.$css["desc"].'</label><div class="controls"><input type="text" name="'.$css["id"].'" class="colour" id="'.$css["id"].'" style="width:50px;" value="'.$css['value'].'"></div></div>');
-  }
-  $xtpl->assign("n", "<br>");
-  $xtpl->parse('main');
+if ($_GET['q'] == 'style') {
+  $body = '<form action="admin.php?q=style" method="post" class="well">
+  <h2>Edit Raw Stylesheet:</h2>
+  <textarea style="width:100%;" rows="20" cols="100" name="style">' . htmlentities(file_get_contents("assets/style.css")) . '</textarea>
+  <input type="submit" class="btn btn-primary" value="Save" />
+</form>';
 }
+
     // Edit Blocks
 if ($_GET['q'] == 'blocks') {
 
@@ -374,7 +380,7 @@ if ($_GET['q'] == 'stats') {
   </form>
   <?php
     // If logged in, display the body that has been produced.
-  
+
 } else {
   echo $body;
   if(isset($xtpl)){
