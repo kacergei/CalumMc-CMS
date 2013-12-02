@@ -1,0 +1,36 @@
+<!-- BEGIN: main -->
+
+ {n} header {
+ {n}  background: #{hexheaderbg};    /* Background color of header. */
+ {n}  color: #{hexheadertxt};        /* Color of header text. */
+ {n} }
+ {n} 
+ {n} header h1 {
+ {n}  color: #{hexheaderh1};         /* Color of header heading. */
+ {n} }
+ {n} 
+ {n} nav {
+ {n}   background: #{hexnavbg};       /* Background color of navigation bar. */
+ {n} }
+ {n} 
+ {n} footer {
+ {n}   background: #{hexfooterbg};    /* Background of footer. */
+ {n}   color: #{hexfootertxt};        /* Color of footer text. */
+ {n} }
+ {n} 	
+ {n} .info {
+ {n}   background: #{hexheadblxbg};   /* Background color of block bar. */
+ {n} }
+ {n} 
+ {n} #main {
+ {n}   background: #{hexmainbg};      /* Background color of webpage. */
+ {n} }
+
+<!-- END: main -->
+<!-- BEGIN: css -->
+
+.ym-hlist {
+  background: #{hexnavbg};       /* Set this the same as above. */
+}
+
+<!-- END: css -->

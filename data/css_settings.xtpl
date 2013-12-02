@@ -1,0 +1,19 @@
+<!-- BEGIN: main -->
+
+  {hexheaderbg}
+  {hexheadertxt}
+  {hexheaderh1}
+  {hexnavbg}
+  {hexfooterbg}
+  {hexfootertxt}
+  {hexheadblxbg}
+  {hexmainbg}
+
+<!-- END: main -->
+<!-- BEGIN: css -->
+
+.ym-hlist {
+  background: #{hexnavbg};       /* Set this the same as above. */
+}
+
+<!-- END: css -->

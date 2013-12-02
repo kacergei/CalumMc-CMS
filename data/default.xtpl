@@ -1,0 +1,99 @@
+<!-- BEGIN: main -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>{title}</title>
+	<!-- Mobile viewport optimisation -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="framework/yaml/css/flexible-grids.css" rel="stylesheet" type="text/css"/>
+	<!--[if lte IE 7]>
+	<link href="framework/yaml/yaml/core/iehacks.css" rel="stylesheet" type="text/css" />
+	<![endif]-->
+
+	<!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link href="data/css.php" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<ul class="ym-skiplinks">
+	<li><a class="ym-skip" href="#nav">Skip to navigation (Press Enter)</a></li>
+	<li><a class="ym-skip" href="#main">Skip to main content (Press Enter)</a></li>
+</ul>
+<header>
+	<div class="ym-wrapper">
+		<div class="ym-wbox">
+			{header}
+		</div>
+	</div>
+</header>
+<nav id="nav">
+	<div class="ym-wrapper">
+		<div class="ym-hlist">
+			<ul>
+				{navigation}
+			</ul>
+		</div>
+	</div>
+</nav>
+<div id="main">
+	<div class="ym-wrapper">
+		<div class="ym-wbox">
+			<section class="box info">
+				<div class="ym-grid linearize-level-1">
+					<div class="ym-g66 ym-gl">
+						<div class="ym-grid linearize-level-2">
+							<article class="ym-g50 ym-gl">
+								<div class="ym-gbox-left">
+									<h4>{top1title}</h4>
+									<p>{top1}</p>
+									<a class="ym-button ym-next" href="{top1href}">Read More</a> </div>
+							</article>
+							<article class="ym-g50 ym-gr">
+								<div class="ym-gbox">
+									<h4>{top2title}</h4>
+									<p>{top2}</p>
+									<a class="ym-button ym-next" href="{top2href}">Read More</a> </div>
+							</article>
+						</div>
+					</div>
+					<article class="ym-g33 ym-gr">
+						<div class="ym-gbox-right secondary">
+							<h4>{top3title}</h4>
+							<p>{top3}</p>
+						</div>
+					</article>
+				</div>
+			</section>
+			<section class="ym-grid linearize-level-1">
+				<article class="ym-g66 ym-gl content">
+					<div class="ym-gbox-left ym-clearfix">
+						{content}
+					</div>
+				</article>
+				<aside class="ym-g33 ym-gr">
+					<div class="ym-gbox-right ym-clearfix">
+						{sidebar}
+					</div>
+				</aside>
+			</section>
+		</div>
+	</div>
+</div>
+<footer>
+	<div class="ym-wrapper">
+		<div class="ym-wbox">
+                  {footer}
+                  <p>{copyright}</p>
+		</div>
+	</div>
+</footer>
+<script src="framework/yaml/core/js/yaml-focusfix.js"></script>
+</body>
+</html>
+<!-- END: main -->
+
+			
+			
+			
