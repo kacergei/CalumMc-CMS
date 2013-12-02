@@ -1,6 +1,8 @@
 <?php
 
-$password = ""
+include ("functions.php");
+
+$password = get_data("admin_user_pass");
 
 $directory = "data/";
 
