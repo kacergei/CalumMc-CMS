@@ -4,16 +4,16 @@ $navigation = '';
 
 if (isset($_GET['page'])) {
   if (strstr($_GET['page'], '.') || strstr($_GET['page'], '/')) {
-   die('You can\'t use dots or slashes in page names.');
- }
+     die('You can\'t use dots or slashes in page names.');
+  }
 }
 
 include ('functions.php');
 
 if (isset($_GET['page'])) {
-  $page = $_GET['page'];
+    $page = $_GET['page'];
 } else {
-  $page = 'Home';
+    $page = 'Home';
 }
 
 $dbh = new PDO("sqlite:data/datastore.sqlite");
@@ -21,13 +21,13 @@ $IDq = $dbh->query("SELECT * FROM pages WHERE nav = '1'");
 $rowarray = $IDq->fetchall(PDO::FETCH_ASSOC);
 
 foreach ($rowarray as $file) {
-  if ($page == $file['title']) {
-    $active = 'class="active"';
-  }else{
+    if ($page == $file['title']) {
+        $active = 'class="active"';
+    }else{
+        $active = '';
+    }
+    $navigation.= '<li ' . $active . '><a href="/?page=' . $file['title'] . '">' . $file['title'] . '</a></li>';
     $active = '';
-  }
-  $navigation.= '<li ' . $active . '><a href="/?page=' . $file['title'] . '">' . $file['title'] . '</a></li>';
-  $active = '';
 }
 
 $title = get_data("conf_site_name") . ' | ' . $page;
