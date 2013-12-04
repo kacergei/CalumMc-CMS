@@ -6,7 +6,7 @@ require_once('includes/xtemplate.class.php');
 // Define Vars
 $navigation = '';
 
-// Ensure the user isn't trying to get at anything eles.
+// Ensure the user isn't trying to get at anything else.
 if (isset($_GET['page'])) {
   if (strstr($_GET['page'], '.') || strstr($_GET['page'], '/')) {
      die('You can\'t use dots or slashes in page names.');
@@ -36,9 +36,9 @@ foreach ($rowarray as $file) {
     $active = '';
 }
 
-$title = get_data("conf_site_name") . ' | ' . $page;
+$title = get_data($dbh, "conf_site_name") . ' | ' . $page;
 
-$content = get_page_content($page);
+$content = get_page_content($dbh, $page);
 
 $xtpl = new XTemplate('data/default.xtpl');
 
@@ -48,10 +48,8 @@ $xtpl->assign('content', $content);
 $xtpl->assign('navigation', $navigation);
 
 // Get block data and assign it.
-$dbh = new PDO("sqlite:data/datastore.sqlite");
-$IDq = $dbh->query("SELECT * FROM blocks");
-$rowarray = $IDq->fetchall(PDO::FETCH_ASSOC);
-foreach ($rowarray as $box) {
+
+foreach (get_blocks($dbh) as $box) {
   $xtpl->assign($box['block'].'title', $box['title']);
   $xtpl->assign($box['block'].'href', $box['link']);
   $xtpl->assign($box['block'], $box['text']);

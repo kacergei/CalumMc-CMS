@@ -1,17 +1,17 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
-include ('functions.php');
+require('functions.php');
+
 // Create vars.
 $list = '';
 $body = '';
+
 if(!isset($_GET['q'])){
 	$_GET['q'] = 'home';
 }
 // Process login info.
 if (isset($_POST['user']) && isset($_POST['pass'])) {
-  if ($_POST['user'] == get_data("admin_user_name") && $_POST['pass'] == get_data("admin_user_pass")) {
-    $_SESSION['user'] = get_data("admin_user_name");
+  if ($_POST['user'] == get_data($dbh, "admin_user_name") && $_POST['pass'] == get_data($dbh, "admin_user_pass")) {
+    $_SESSION['user'] = get_data($dbh, "admin_user_name");
   } else {
     $message = 'Wrong Username/Password';
     $alerttype = 'alert-error';
@@ -97,7 +97,7 @@ if (isset($_SESSION['user'])) {
     // Edit a page.
   if ($_GET['q'] == 'edit') {
     $body = '<form action="admin.php?q=edit&p=' . $_GET["p"] . '" class="well" method="post">
-    <textarea style="width:100%;" rows="20" cols="100" name="edit">' . get_page_content($_GET["p"]) . '</textarea>
+    <textarea style="width:100%;" rows="20" cols="100" name="edit">' . get_page_content($dbh,$_GET["p"]) . '</textarea>
     <script type="text/javascript">
      CKEDITOR.replace("edit",{
        extraPlugins: "magicline",
@@ -173,7 +173,7 @@ if (isset($_POST['blocksubmit'])) {
 <html>
 <head>
   <title>
-    <?php echo get_data("conf_site_name"); ?> Admin Panel
+    <?php echo get_data($dbh,"conf_site_name"); ?> Admin Panel
   </title>
   <meta charset="utf-8">
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
