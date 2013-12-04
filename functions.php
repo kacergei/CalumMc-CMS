@@ -6,7 +6,7 @@ define(DATABASE_LOCATION, "data/datastore.sqlite");
 session_start();
 
 // Create PDO object
-$dbh = new PDO("sqlite:" + DATABASE_LOCATION);
+$dbh = new PDO("sqlite:" . DATABASE_LOCATION);
 
 function get_data($dbh,$data) {
     $IDq = $dbh->query("SELECT value FROM settings WHERE option = " . $dbh->quote($data));
