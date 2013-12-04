@@ -1,6 +1,6 @@
 <?php
 // User defined constants
-define(DATABASE_LOCATION, "./datastore.sqlite");
+define(DATABASE_LOCATION, "data/datastore.sqlite");
 
 // Start Session
 session_start();
