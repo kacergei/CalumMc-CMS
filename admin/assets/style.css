@@ -1,0 +1,9 @@
+#popup{
+  display:none;
+  margin:5px;
+}
+img{
+  padding:0;
+  margin:0;
+  border-style: none;
+}

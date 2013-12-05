@@ -175,95 +175,12 @@ if (isset($_POST['blocksubmit'])) {
   <title>
     <?php echo get_data($dbh,"conf_site_name"); ?> Admin Panel
   </title>
-  <meta charset="utf-8">
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-  </script>
-  <script type="text/javascript" src="includes/colorpicker/js/colorpicker.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script type="text/javascript">
-    function showpop(){
-      $(document).ready(function() {
-        $("#popup").fadeIn("slow");
-        setTimeout("hidepop()",12000);
-      });
-    }
-
-    function hidepop(){
-      $(document).ready(function() {
-        $("#popup").fadeOut("slow");
-      });
-    }
-    function resizeIframe(height){
-					    // "+60" is a general rule of thumb to allow for differences in
-					    // IE & and FF height reporting, can be adjusted as required
-              document.getElementById('local-iframe').height = parseInt(height)+60;
-              document.getElementById('local-iframe').width = '100%';
-            }
-          </script>
-          <style type="text/css">
-            #popup{
-              display:none;
-              margin-top:5px;
-            }
-            body{
-              padding-top: 126px;
-            }
-            img{
-              padding:0;
-              margin:0;
-              border-style: none;
-            }
-            .brand{
-              position: absolute;
-              width: 100%;
-              left: 0;
-              text-align: center;
-              margin: auto;
-            }
-            .navbar-inner{
-              height:126px;
-            }
-            .nav-collapse{
-             margin-top:76px;
-           }
-           .login-logo{
-             text-align: center;
-           }
-         </style>
-         <link href="framework/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-         <link rel="stylesheet" href="includes/colorpicker/css/colorpicker.css" type="text/css" />
-         <script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-         <?php if ($_GET['q'] == 'edit' || $_GET['q'] == 'blocks') { ?>
-         <script src="includes/ckeditor/ckeditor.js"></script>
-         <?php } ?>
-         <?php if ($_GET['q'] == 'files') { ?>
-         <!-- jQuery and jQuery UI (REQUIRED) -->
-         <link rel="stylesheet" type="text/css" media="screen" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/smoothness/jquery-ui.css">
-         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"></script>
-
-         <!-- elFinder CSS (REQUIRED) -->
-         <link rel="stylesheet" type="text/css" media="screen" href="includes/elfinder-2.0-rc1/css/elfinder.min.css">
-         <link rel="stylesheet" type="text/css" media="screen" href="includes/elfinder-2.0-rc1/css/theme.css">
-
-         <!-- elFinder JS (REQUIRED) -->
-         <script type="text/javascript" src="includes/elfinder-2.0-rc1/js/elfinder.min.js"></script>
-
-         <!-- elFinder initialization (REQUIRED) -->
-         <script type="text/javascript" charset="utf-8">
-           $().ready(function() {
-            var elf = $('#elfinder').elfinder({
-					url : 'includes/elfinder-2.0-rc1/php/connector.php'  // connector URL (REQUIRED)
-				}).elfinder('instance');
-          });
-         </script>
-
-         <?php $body = '<div id="elfinder"></div>';
-       } ?>
-     </head>
-     <body onload="$('.colour').ColorPicker();<?php if (isset($message)) {
-      echo 'showpop();"';
-    }else{ echo '"';} ?>>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script type="text/javascript" src="./admin/assets/admin.js"></script>
+  <script src="includes/ckeditor/ckeditor.js"></script>
+</head>
+     <body>
     <?php if (isset($_SESSION['user'])) { ?>
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
